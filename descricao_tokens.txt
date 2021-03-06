@@ -1,0 +1,11 @@
+letra ::= [a-z]
+digito ::= [0-9]
+char ::= 'letra' | 'dígito'
+
+inteiro ::= digito+
+float ::= dígito+.dígito+
+identificador ::= (letra | "_")(letra | "_" | dígito)*
+operador_relacional ::= <  |  >  |  <=  |  >=  |  ==  |  !=
+operador_aritmético ::= "+"  |  "-"  |  "*"  |  "/"  |  "="
+caracter_especial ::= ")"  |  "("  |  "{"  |  "}"  |  ","  |  ";"
+palavra_reservada ::= main  |  if  |  else  |  while  |  do  |  for  |  int  |  float  |  char
