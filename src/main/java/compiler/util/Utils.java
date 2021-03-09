@@ -53,7 +53,7 @@ public class Utils {
     }
 
     // Caracteres não consumíveis
-    public static boolean isSpace(char c) {
+    public static boolean isNonConsumable(char c) {
         return c == ' ' || c == '\t' || c == '\n' || c == '\r';
     }
 
