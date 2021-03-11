@@ -5,21 +5,18 @@ import java.util.Map;
 
 public class Utils {
 
-    private static Map<Integer, String> reservedWords;
+    private static final Map<Integer, String> RESERVED_WORDS = new HashMap<Integer, String>() {{
+        put(1, "main");
+        put(2, "if");
+        put(3, "else");
+        put(4, "while");
+        put(5, "do");
+        put(6, "for");
+        put(7, "int");
+        put(8, "float");
+        put(9, "char");
+    }};
 
-    private Utils() {
-        reservedWords = new HashMap<Integer, String>() {{
-            put(1, "main");
-            put(2, "if");
-            put(3, "else");
-            put(4, "while");
-            put(5, "do");
-            put(6, "for");
-            put(7, "int");
-            put(8, "float");
-            put(9, "char");
-        }};
-    }
 
     // digito ::= [0-9]
     public static boolean isDigit(char c) {
@@ -43,7 +40,7 @@ public class Utils {
 
     // operador_aritmético ::= "+"  |  "-"  |  "*"  |  "/"  |  "="
     public static boolean isAritmeticOperator(char c) {
-        return  c == '+' || c == '-' || c == '*' || c == '/' || c == '=';
+        return c == '+' || c == '-' || c == '*' || c == '/' || c == '=';
     }
 
     // caracter_especial ::= ")"  |  "("  |  "{"  |  "}"  |  ","  |  ";"
@@ -59,7 +56,12 @@ public class Utils {
 
     //  palavra_reservada ::= main  |  if  |  else  |  while  |  do  |  for  |  int  |  float  |  char
     public static boolean isReservedWord(String cadeia) {
-        return reservedWords.containsValue(cadeia);
+        return RESERVED_WORDS.containsValue(cadeia);
+    }
+
+    // .
+    public static boolean isDot(char c) {
+        return c == '.';
     }
 
 }
