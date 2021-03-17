@@ -78,10 +78,13 @@ public class LexicalScanner {
     }
 
     public Token automaton(char c) {
+        TokenType type;
         switch (state) {
             case ZERO:
                 append(c);
-                if (isNumber(c))
+                if (isNonConsumable(c))
+                    break;
+                else if (isNumber(c))
                     state = ONE;
                 else if (isUnderline(c) || isLetter(c))
                     state = SIX;
@@ -89,9 +92,12 @@ public class LexicalScanner {
                     state = EIGHT;
                 else if (isAritmeticOperator(c))
                     state = ELEVEN;
-                else {
+                else if (isSpecialChar(c))
+                    state = TWELVE;
+                else if (isRelationalOperator(c))
+                    state = THIRTEEN;
+                else
                     throw new UnrecognizedTokenException("Unrecognized symbol - '" + scanned + "'");
-                }
                 break;
             case ONE:
                 append(c);
@@ -153,7 +159,6 @@ public class LexicalScanner {
                 return returnToken(RELATIONAL_OPERATOR_EQUAL, c);
             case ELEVEN:
                 append(c);
-                TokenType type;
 
                 if (isNonConsumable(c))
                     c = previousChar();
@@ -164,28 +169,82 @@ public class LexicalScanner {
                     type = ARITHMETIC_OPERATOR_SUM;
                 else if (isMult(c))
                     type = ARITHMETIC_OPERATOR_MULTIPLICATION;
-                else
+                else if (isDiv(c))
                     type = ARITHMETIC_OPERATOR_DIVISION;
+                else
+                    throw new UnrecognizedTokenException("Unrecognized token - '" + scanned + "'");
 
                 return returnToken(type, c);
             case TWELVE:
-                break;
+                append(c);
+
+                if (isNonConsumable(c))
+                    c = previousChar();
+
+                if (isComma(c))
+                    type = SPECIAL_CHARACTER_COMMA;
+                else if (isSemicolon(c))
+                    type = SPECIAL_CHARACTER_SEMICOLON;
+                else if (isOpenParentesis(c))
+                    type = SPECIAL_CHARACTER_OPEN_PARENTHESIS;
+                else if (isCloseParentesis(c))
+                    type = SPECIAL_CHARACTER_CLOSE_PARENTHESIS;
+                else if (isOpenCurlyBracket(c))
+                    type = SPECIAL_CHARACTER_OPEN_CURLY_BRACKET;
+                else if (isCloseCurlyBracket(c))
+                    type = SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET;
+                else
+                    throw new UnrecognizedTokenException("Unrecognized token - '" + scanned + "'");
+
+                return returnToken(type, c);
             case THIRTEEN:
+                append(c);
+
+                if (!isRelationalOperator(c))
+                    c = previousChar();
+
+                if (isLessThan(c))
+                    state = FOURTEEN;
+                else if (isGreaterThan(c))
+                    state = SEVENTEEN;
+                else if (isDiff(c))
+                    state = TWENTY;
+                else
+                    throw new UnrecognizedTokenException("Unrecognized token - '" + scanned + "'");
+
                 break;
             case FOURTEEN:
+                c = nextChar();
+                if (isEquals(c))
+                    state = FIFTHTEEN;
+                else
+                    state = SIXTEEN;
                 break;
             case FIFTHTEEN:
-                break;
+                return returnToken(RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO, c);
             case SIXTEEN:
-                break;
+                return returnToken(RELATIONAL_OPERATOR_LESS_THAN, c);
             case SEVENTEEN:
+                c = nextChar();
+                if (isEquals(c))
+                    state = EIGHTEEN;
+                else
+                    state = NINETEEN;
                 break;
             case EIGHTEEN:
-                break;
+                return returnToken(RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO, c);
             case NINETEEN:
-                break;
+                return returnToken(RELATIONAL_OPERATOR_GREATER_THAN, c);
             case TWENTY:
+                append(c);
+                c = nextChar();
+                if (isEquals(c))
+                    state = TWENTY_ONE;
+                else
+                    throw new UnrecognizedTokenException("Unrecognized operator - '" + scanned + "'");
                 break;
+            case TWENTY_ONE:
+                return returnToken(RELATIONAL_OPERATOR_DIFFERENT, c);
             default:
                 throw new IllegalStateException("Estado inválido: " + state);
         }

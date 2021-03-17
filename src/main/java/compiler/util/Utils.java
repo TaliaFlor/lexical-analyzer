@@ -35,12 +35,12 @@ public class Utils {
 
     // operador_relacional ::= <  |  >  |  <=  |  >=  |  ==  |  !=
     public static boolean isRelationalOperator(char c) {
-        return c == '>' || c == '<' || c == '=' || c == '!';
+        return c == '>' || c == '<' || c == '!';
     }
 
     // operador_aritmético ::= "+"  |  "-"  |  "*"  |  "/"  |  "="
     public static boolean isAritmeticOperator(char c) {
-        return c == '+' || c == '-' || c == '*' || c == '/' || c == '=';
+        return c == '+' || c == '-' || c == '*' || c == '/';
     }
 
     // caracter_especial ::= ")"  |  "("  |  "{"  |  "}"  |  ","  |  ";"
@@ -92,6 +92,51 @@ public class Utils {
     // /
     public static boolean isDiv(char c) {
         return c == '/';
+    }
+
+    // ,
+    public static boolean isComma(char c) {
+        return c == ',';
+    }
+
+    // ;
+    public static boolean isSemicolon(char c) {
+        return c == ';';
+    }
+
+    // (
+    public static boolean isOpenParentesis(char c) {
+        return c == '(';
+    }
+
+    // )
+    public static boolean isCloseParentesis(char c) {
+        return c == ')';
+    }
+
+    // {
+    public static boolean isOpenCurlyBracket(char c) {
+        return c == '{';
+    }
+
+    // }
+    public static boolean isCloseCurlyBracket(char c) {
+        return c == '}';
+    }
+
+    // <
+    public static boolean isLessThan(char c) {
+        return c == '<';
+    }
+
+    // >
+    public static boolean isGreaterThan(char c) {
+        return c == '>';
+    }
+
+    // >
+    public static boolean isDiff(char c) {
+        return c == '!';
     }
 
 }

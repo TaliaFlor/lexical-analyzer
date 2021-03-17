@@ -3,6 +3,7 @@ package compiler.scanner;
 import compiler.exception.MalformedTokenException;
 import compiler.model.Token;
 import compiler.model.TokenType;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -119,4 +120,80 @@ public class LexicalScannerTest {
         assertEquals(TokenType.ARITHMETIC_OPERATOR_DIVISION, token.getType());
     }
 
+    @Test
+    void testTokenIsComma(){
+        lexicalScanner = new LexicalScanner(PATH + "comma_character.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.SPECIAL_CHARACTER_COMMA, token.getType());
+    }
+
+    @Test
+    void testTokenIsSemiColon(){
+        lexicalScanner = new LexicalScanner(PATH + "semicolon_character.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.SPECIAL_CHARACTER_SEMICOLON, token.getType());
+    }
+
+    @Test
+    void testTokenIsOpenParentesis(){
+        lexicalScanner = new LexicalScanner(PATH + "open_parentesis_character.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS, token.getType());
+    }
+
+    @Test
+    void testTokenIsCloseParentesis(){
+        lexicalScanner = new LexicalScanner(PATH + "close_parentesis_character.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS, token.getType());
+    }
+
+    @Test
+    void testTokenIsOpenCurlyBracketCharacter(){
+        lexicalScanner = new LexicalScanner(PATH + "open_curly_bracket_character.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET, token.getType());
+    }
+
+    @Test
+    void testTokenIsCloseCurlyBracketCharacter(){
+        lexicalScanner = new LexicalScanner(PATH + "close_curly_bracket_character.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET, token.getType());
+    }
+
+    @Test
+    void testTokenIsALessThanOperator(){
+        lexicalScanner = new LexicalScanner(PATH + "less_than_operator.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.RELATIONAL_OPERATOR_LESS_THAN, token.getType());
+    }
+
+    @Test
+    void testTokenIsALessThanOrEqualToOperator(){
+        lexicalScanner = new LexicalScanner(PATH + "less_than_or_equal_to_operator.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO, token.getType());
+    }
+
+    @Test
+    void testTokenIsAGreaterThanOperator(){
+        lexicalScanner = new LexicalScanner(PATH + "greater_than_operator.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.RELATIONAL_OPERATOR_GREATER_THAN, token.getType());
+    }
+
+    @Test
+    void testTokenIsAGreaterThanOrEqualToOperator(){
+        lexicalScanner = new LexicalScanner(PATH + "greater_than_or_equal_to_operator.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO, token.getType());
+    }
+
+    @Test
+    void testTokenIsADifferentOperator(){
+        lexicalScanner = new LexicalScanner(PATH + "different_operator.txt");
+        Token token = lexicalScanner.nextToken();
+        assertEquals(TokenType.RELATIONAL_OPERATOR_DIFFERENT, token.getType());
+    }
 }
