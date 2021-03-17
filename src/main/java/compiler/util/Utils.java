@@ -19,7 +19,7 @@ public class Utils {
 
 
     // digito ::= [0-9]
-    public static boolean isDigit(char c) {
+    public static boolean isNumber(char c) {
         return c >= '0' && c <= '9';
     }
 
@@ -30,7 +30,7 @@ public class Utils {
 
     // char ::= 'letra' | 'dígito'
     public static boolean isChar(char c) {
-        return isLetter(c) || isDigit(c);
+        return isLetter(c) || isNumber(c);
     }
 
     // operador_relacional ::= <  |  >  |  <=  |  >=  |  ==  |  !=
@@ -56,12 +56,42 @@ public class Utils {
 
     //  palavra_reservada ::= main  |  if  |  else  |  while  |  do  |  for  |  int  |  float  |  char
     public static boolean isReservedWord(String cadeia) {
-        return RESERVED_WORDS.containsValue(cadeia);
+        return RESERVED_WORDS.containsValue(cadeia.trim());
     }
 
     // .
     public static boolean isDot(char c) {
         return c == '.';
+    }
+
+    // _
+    public static boolean isUnderline(char c) {
+        return c == '_';
+    }
+
+    // =
+    public static boolean isEquals(char c){
+        return c == '=';
+    }
+
+    // -
+    public static boolean isMinus(char c){
+        return c == '-';
+    }
+
+    // +
+    public static boolean isPlus(char c){
+        return c == '+';
+    }
+
+    // *
+    public static boolean isMult(char c){
+        return c == '*';
+    }
+
+    // /
+    public static boolean isDiv(char c) {
+        return c == '/';
     }
 
 }
