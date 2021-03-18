@@ -6,6 +6,7 @@ import compiler.model.State;
 import compiler.model.Token;
 import compiler.model.TokenType;
 import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -15,7 +16,7 @@ import static compiler.model.State.*;
 import static compiler.model.TokenType.*;
 import static compiler.util.Utils.*;
 
-@Log
+@Slf4j
 public class LexicalScanner {
 
     private char[] content;
@@ -28,7 +29,7 @@ public class LexicalScanner {
         this.scanned = "";
         this.state = State.ZERO;
         this.content = new char[0];
-        log.warning("No file provided as input");
+        log.warn("No file provided as input");
     }
 
     public LexicalScanner(String filename) {
@@ -36,10 +37,10 @@ public class LexicalScanner {
         this.state = State.ZERO;
         try {
             String text = new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8);
-            log.info("\n-------- File received --------\n" + text + "\n--------------------------------");
+            log.trace("File received\n" + text);
             this.content = text.toCharArray();
         } catch (Exception e) {
-            log.severe("Erro ao ler arquivo - " + e.getMessage());
+            log.error("Erro ao ler arquivo - " + e.getMessage());
             e.printStackTrace();
         }
     }

@@ -4,16 +4,17 @@ import compiler.exception.MalformedTokenException;
 import compiler.exception.UnrecognizedTokenException;
 import compiler.model.Token;
 import compiler.scanner.LexicalScanner;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 
-@Log
+@Slf4j
 public class LexicalAnalyzer {
 
     public static void main(String[] args) {
         try {
-            LexicalScanner lexicalScanner = new LexicalScanner("somatorio2.c");
+            LexicalScanner lexicalScanner = new LexicalScanner("somatorio.c");
+//            LexicalScanner lexicalScanner = new LexicalScanner("somatorio_erro.c");        // Exemplo de arquivo com erro
 
-            System.out.println("\n========= Start of reading =========\n");
+            log.info("Start of reading");
 
             Token token;
             do {
@@ -22,13 +23,13 @@ public class LexicalAnalyzer {
                     System.out.println(token);
             } while (token != null);
         } catch (MalformedTokenException e) {
-            log.severe("MalformedTokenException: " + e.getMessage());
+            log.error("MalformedTokenException: " + e.getMessage());
         } catch (UnrecognizedTokenException e) {
-            log.severe("UnrecognizedTokenException: " + e.getMessage());
+            log.error("UnrecognizedTokenException: " + e.getMessage());
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("\n========= End of reading =========\n");
+            log.info("End of reading");
         } catch (Exception e) {
-            log.severe("Error occurred during file lexical analysis");
+            log.error("Error occurred during file lexical analysis");
             e.printStackTrace();
         }
     }
