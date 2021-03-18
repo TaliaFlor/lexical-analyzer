@@ -24,6 +24,13 @@ public class LexicalScanner {
     private String scanned;
 
 
+    public LexicalScanner() {
+        this.scanned = "";
+        this.state = State.ZERO;
+        this.content = new char[0];
+        log.warning("No file provided as input");
+    }
+
     public LexicalScanner(String filename) {
         this.scanned = "";
         this.state = State.ZERO;
@@ -105,7 +112,7 @@ public class LexicalScanner {
                     break;
                 else if (isDot(c))
                     state = THREE;
-                else if (!isLetter(c))
+                else if (isNonConsumable(c) || !isLetter(c))
                     state = TWO;
                 else
                     throwMalformedNumberException(c);
