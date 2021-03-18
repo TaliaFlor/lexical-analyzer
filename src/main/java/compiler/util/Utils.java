@@ -35,7 +35,7 @@ public class Utils {
 
     // operador_relacional ::= <  |  >  |  <=  |  >=  |  ==  |  !=
     public static boolean isRelationalOperator(char c) {
-        return c == '>' || c == '<' || c == '!';
+        return c == '>' || c == '<'  || c == '!';
     }
 
     // operador_aritmético ::= "+"  |  "-"  |  "*"  |  "/"  |  "="
@@ -137,6 +137,10 @@ public class Utils {
     // >
     public static boolean isDiff(char c) {
         return c == '!';
+    }
+
+    public static boolean isOther(char c) {
+        return isNonConsumable(c) || isSpecialChar(c) || isAritmeticOperator(c) || isRelationalOperator(c);
     }
 
 }

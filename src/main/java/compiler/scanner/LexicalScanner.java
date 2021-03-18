@@ -88,10 +88,11 @@ public class LexicalScanner {
         TokenType type;
         switch (state) {
             case ZERO:
-                append(c);
                 if (isNonConsumable(c))
                     break;
-                else if (isNumber(c))
+
+                append(c);
+                if (isNumber(c))
                     state = ONE;
                 else if (isUnderline(c) || isLetter(c))
                     state = SIX;
@@ -99,22 +100,25 @@ public class LexicalScanner {
                     state = EIGHT;
                 else if (isAritmeticOperator(c))
                     state = ELEVEN;
-                else if (isSpecialChar(c))
+                else if (isSpecialChar(c)) {
+                    back();
                     state = TWELVE;
-                else if (isRelationalOperator(c))
+                } else if (isRelationalOperator(c))
                     state = THIRTEEN;
                 else
-                    throw new UnrecognizedTokenException("Unrecognized symbol - '" + scanned + "'");
+                    throw new UnrecognizedTokenException("Unrecognized symbol - '" + (scanned + c) + "'");
                 break;
             case ONE:
-                append(c);
-                if (isNumber(c))
+                if (isNumber(c)) {
+                    append(c);
                     break;
-                else if (isDot(c))
+                } else if (isDot(c)) {
+                    append(c);
                     state = THREE;
-                else if (isNonConsumable(c) || !isLetter(c))
+                } else if (isNonConsumable(c) || !isLetter(c)) {
+                    back();
                     state = TWO;
-                else
+                } else
                     throwMalformedNumberException(c);
                 break;
             case TWO:
@@ -138,21 +142,22 @@ public class LexicalScanner {
             case FIVE:
                 return returnToken(REAL_NUMBER, c);
             case SIX:
-                append(c);
-                if (isUnderline(c) || isLetter(c) || isNumber(c))
+                if (isUnderline(c) || isLetter(c) || isNumber(c)) {
+                    append(c);
                     break;
-                else if (isNonConsumable(c) || isSpecialChar(c) || isAritmeticOperator(c) || isRelationalOperator(c))
-                    state = SEVEN;
-                else {
+                } else if (isOther(c)) {
                     back();
-                    throw new MalformedTokenException("Malformed identifier - '" + scanned + "'");
+                    state = SEVEN;
+                } else {
+                    back();
+                    throw new MalformedTokenException("Malformed identifier - '" + (scanned + c) + "'");
                 }
                 break;
             case SEVEN:
-                if (isReservedWord(scanned + c))
-                    return returnToken(RESERVED_WORD, c);
+                if (isReservedWord(scanned))
+                    return returnToken(RESERVED_WORD);
                 else
-                    return returnToken(IDENTIFIER, c);
+                    return returnToken(IDENTIFIER);
             case EIGHT:
                 append(c);
                 if (isEquals(c))
@@ -165,8 +170,6 @@ public class LexicalScanner {
             case TEN:
                 return returnToken(RELATIONAL_OPERATOR_EQUAL, c);
             case ELEVEN:
-                append(c);
-
                 if (isNonConsumable(c))
                     c = previousChar();
 
@@ -179,15 +182,12 @@ public class LexicalScanner {
                 else if (isDiv(c))
                     type = ARITHMETIC_OPERATOR_DIVISION;
                 else
-                    throw new UnrecognizedTokenException("Unrecognized token - '" + scanned + "'");
+                    throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'");
 
+                next();
+                next();
                 return returnToken(type, c);
             case TWELVE:
-                append(c);
-
-                if (isNonConsumable(c))
-                    c = previousChar();
-
                 if (isComma(c))
                     type = SPECIAL_CHARACTER_COMMA;
                 else if (isSemicolon(c))
@@ -201,8 +201,9 @@ public class LexicalScanner {
                 else if (isCloseCurlyBracket(c))
                     type = SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET;
                 else
-                    throw new UnrecognizedTokenException("Unrecognized token - '" + scanned + "'");
+                    throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'");
 
+                next();
                 return returnToken(type, c);
             case THIRTEEN:
                 append(c);
@@ -217,7 +218,7 @@ public class LexicalScanner {
                 else if (isDiff(c))
                     state = TWENTY;
                 else
-                    throw new UnrecognizedTokenException("Unrecognized token - '" + scanned + "'");
+                    throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'");
 
                 break;
             case FOURTEEN:
@@ -248,7 +249,7 @@ public class LexicalScanner {
                 if (isEquals(c))
                     state = TWENTY_ONE;
                 else
-                    throw new UnrecognizedTokenException("Unrecognized operator - '" + scanned + "'");
+                    throw new UnrecognizedTokenException("Unrecognized operator - '" + (scanned + c) + "'");
                 break;
             case TWENTY_ONE:
                 return returnToken(RELATIONAL_OPERATOR_DIFFERENT, c);
@@ -259,14 +260,27 @@ public class LexicalScanner {
     }
 
     private void throwMalformedNumberException(char c) {
-        append(c);
-        throw new MalformedTokenException("Malformed number - '" + scanned + "'");
+        throw new MalformedTokenException("Malformed number - '" + (scanned + c) + "'");
+    }
+
+    private Token returnToken(TokenType type) {
+        String text = scanned.trim();
+        back();
+        resetState();
+        return new Token(type, text);
     }
 
     private Token returnToken(TokenType type, char c) {
+        String text = scanned.trim();
         back();
         append(c);
-        return new Token(type, scanned.trim());
+        resetState();
+        return new Token(type, text);
+    }
+
+    private void resetState() {
+        scanned = "";
+        state = ZERO;
     }
 
 }

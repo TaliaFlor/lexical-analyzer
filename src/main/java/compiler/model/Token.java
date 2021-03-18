@@ -10,4 +10,10 @@ import lombok.NoArgsConstructor;
 public class Token {
     private TokenType type;
     private String text;
+
+    @Override
+    public String toString() {
+        return type + " -> '" + text + "'";
+    }
+
 }
