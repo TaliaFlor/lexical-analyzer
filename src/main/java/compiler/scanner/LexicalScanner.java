@@ -132,13 +132,14 @@ public class LexicalScanner {
                 append(c);
                 break;
             case FOUR:
-                append(c);
-                if (isNumber(c))
-                    break;
-                else if (!isLetter(c))
+                if (isNumber(c)) {
+                    append(c);
+                } else if (!isLetter(c)) {
+                    back();
                     state = FIVE;
-                else
+                } else {
                     throwMalformedNumberException(c);
+                }
                 break;
             case FIVE:
                 return returnToken(REAL_NUMBER, c);
