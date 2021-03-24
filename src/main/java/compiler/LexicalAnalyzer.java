@@ -11,8 +11,8 @@ public class LexicalAnalyzer {
 
     public static void main(String[] args) {
         try {
-            LexicalScanner lexicalScanner = new LexicalScanner("somatorio.c");
-//            LexicalScanner lexicalScanner = new LexicalScanner("somatorio_erro.c");        // Exemplo de arquivo com erro
+//            LexicalScanner lexicalScanner = new LexicalScanner("somatorio.c");
+            LexicalScanner lexicalScanner = new LexicalScanner("somatorio_erro.c");        // Exemplo de arquivo com erro
 
             log.info("Start of reading");
 

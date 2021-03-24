@@ -172,7 +172,7 @@ public class LexicalScanner {
             case TEN:
                 return returnToken(RELATIONAL_OPERATOR_EQUAL, c);
             case ELEVEN:
-                if (isNonConsumable(c))
+                if (isNonConsumable(c) || isChar(c) || isUnderline(c) || isOpenParentesis(c))   //TODO adicionar o check para char aqui
                     c = previousChar();
 
                 if (isMinus(c))
