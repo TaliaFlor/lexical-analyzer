@@ -5,7 +5,6 @@ import compiler.exception.UnrecognizedTokenException;
 import compiler.model.State;
 import compiler.model.Token;
 import compiler.model.TokenType;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -106,6 +105,8 @@ public class LexicalScanner {
                     state = TWELVE;
                 } else if (isRelationalOperator(c))
                     state = THIRTEEN;
+                else if (isSingleQuotes(c))
+                    state = TWENTY_TWO;
                 else
                     throw new UnrecognizedTokenException("Unrecognized symbol - '" + (scanned + c) + "'");
                 break;
@@ -255,6 +256,22 @@ public class LexicalScanner {
                 break;
             case TWENTY_ONE:
                 return returnToken(RELATIONAL_OPERATOR_DIFFERENT, c);
+            case TWENTY_TWO:
+                append(c);
+                if (isChar(c))
+                    state = TWENTY_THREE;
+                else
+                    throw new MalformedTokenException("Malformed char - (" + scanned + ")");
+                break;
+            case TWENTY_THREE:
+                append(c);
+                if (isSingleQuotes(c))
+                    state = TWENTY_FOUR;
+                else
+                    throw new MalformedTokenException("Malformed char - (" + scanned + ")");
+                break;
+            case TWENTY_FOUR:
+                return returnToken(CHAR);
             default:
                 throw new IllegalStateException("Estado inválido: " + state);
         }

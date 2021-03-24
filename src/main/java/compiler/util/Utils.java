@@ -143,4 +143,8 @@ public class Utils {
         return isNonConsumable(c) || isSpecialChar(c) || isAritmeticOperator(c) || isRelationalOperator(c);
     }
 
+    public static boolean isSingleQuotes(char c) {
+        return c == '\'';
+    }
+
 }

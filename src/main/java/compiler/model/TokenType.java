@@ -1,6 +1,7 @@
 package compiler.model;
 
 public enum TokenType {
+    CHAR,
     NON_CONSUMABLE,
     INTEGER_NUMBER,
     REAL_NUMBER,
