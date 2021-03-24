@@ -1,8 +1,20 @@
-int main() {
-    int soma = 0a;
-    int i = 1;
-	while (i <= 100) {
-		soma = soma + i;
-		i = i + 1;
-	}
-}
+int main float a '1' 
+'casa'
+
+inty
+< >
+floata
+1.3.1
+
+'a'
+'1'
+'@'
+
+a@c
+_casa
+123asd
+
+a+b*c
+===
+<=>
+
