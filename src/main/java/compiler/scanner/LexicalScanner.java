@@ -257,18 +257,17 @@ public class LexicalScanner {
             case TWENTY_ONE:
                 return returnToken(RELATIONAL_OPERATOR_DIFFERENT, c);
             case TWENTY_TWO:
-                append(c);
+                scanned = String.valueOf(c);    //Para remover o (') que foi appendido
                 if (isChar(c))
                     state = TWENTY_THREE;
                 else
                     throw new MalformedTokenException("Malformed char - (" + scanned + ")");
                 break;
             case TWENTY_THREE:
-                append(c);
                 if (isSingleQuotes(c))
                     state = TWENTY_FOUR;
                 else
-                    throw new MalformedTokenException("Malformed char - (" + scanned + ")");
+                    throw new MalformedTokenException("Malformed char - (" + (scanned + c) + ")");
                 break;
             case TWENTY_FOUR:
                 return returnToken(CHAR);
