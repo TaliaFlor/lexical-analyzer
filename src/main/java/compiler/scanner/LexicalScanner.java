@@ -11,8 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static compiler.model.State.*;
-import static compiler.model.TokenType.*;
 import static compiler.util.Utils.*;
 
 @Slf4j
@@ -93,20 +91,20 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
 
                 append(c);
                 if (isNumber(c))
-                    state = ONE;
+                    state = State.ONE;
                 else if (isUnderline(c) || isLetter(c))
-                    state = SIX;
+                    state = State.SIX;
                 else if (isEquals(c))
-                    state = EIGHT;
+                    state = State.EIGHT;
                 else if (isAritmeticOperator(c))
-                    state = ELEVEN;
+                    state = State.ELEVEN;
                 else if (isSpecialChar(c)) {
                     back();
-                    state = TWELVE;
+                    state = State.TWELVE;
                 } else if (isRelationalOperator(c))
-                    state = THIRTEEN;
+                    state = State.THIRTEEN;
                 else if (isSingleQuotes(c))
-                    state = TWENTY_TWO;
+                    state = State.TWENTY_TWO;
                 else
                     throw new UnrecognizedTokenException("Unrecognized symbol - '" + (scanned + c) + "'");
                 break;
@@ -116,18 +114,18 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
                     break;
                 } else if (isDot(c)) {
                     append(c);
-                    state = THREE;
+                    state = State.THREE;
                 } else if (isNonConsumable(c) || !isLetter(c)) {
                     back();
-                    state = TWO;
+                    state = State.TWO;
                 } else
                     throwMalformedNumberException(c);
                 break;
             case TWO:
-                return returnToken(INTEGER_NUMBER, c);
+                return returnToken(TokenType.INTEGER_NUMBER, c);
             case THREE:
                 if (isNumber(c))
-                    state = FOUR;
+                    state = State.FOUR;
                 else
                     throwMalformedNumberException(c);
                 append(c);
@@ -137,20 +135,20 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
                     append(c);
                 } else if (!isLetter(c)) {
                     back();
-                    state = FIVE;
+                    state = State.FIVE;
                 } else {
                     throwMalformedNumberException(c);
                 }
                 break;
             case FIVE:
-                return returnToken(REAL_NUMBER, c);
+                return returnToken(TokenType.REAL_NUMBER, c);
             case SIX:
                 if (isUnderline(c) || isLetter(c) || isNumber(c)) {
                     append(c);
                     break;
                 } else if (isOther(c)) {
                     back();
-                    state = SEVEN;
+                    state = State.SEVEN;
                 } else {
                     back();
                     throw new MalformedTokenException("Malformed identifier - '" + (scanned + c) + "'");
@@ -158,32 +156,32 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
                 break;
             case SEVEN:
                 if (isReservedWord(scanned))
-                    return returnToken(RESERVED_WORD);
+                    return returnToken(TokenType.RESERVED_WORD);
                 else
-                    return returnToken(IDENTIFIER);
+                    return returnToken(TokenType.IDENTIFIER);
             case EIGHT:
                 append(c);
                 if (isEquals(c))
-                    state = TEN;
+                    state = State.TEN;
                 else
-                    state = NINE;
+                    state = State.NINE;
                 break;
             case NINE:
-                return returnToken(ARITHMETIC_OPERATOR_ATTRIBUTION, c);
+                return returnToken(TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION, c);
             case TEN:
-                return returnToken(RELATIONAL_OPERATOR_EQUAL, c);
+                return returnToken(TokenType.RELATIONAL_OPERATOR_EQUAL, c);
             case ELEVEN:
                 if (isNonConsumable(c) || isChar(c) || isUnderline(c) || isOpenParentesis(c))   //TODO adicionar o check para char aqui
                     c = previousChar();
 
                 if (isMinus(c))
-                    type = ARITHMETIC_OPERATOR_SUBTRACTION;
+                    type = TokenType.ARITHMETIC_OPERATOR_SUBTRACTION;
                 else if (isPlus(c))
-                    type = ARITHMETIC_OPERATOR_SUM;
+                    type = TokenType.ARITHMETIC_OPERATOR_SUM;
                 else if (isMult(c))
-                    type = ARITHMETIC_OPERATOR_MULTIPLICATION;
+                    type = TokenType.ARITHMETIC_OPERATOR_MULTIPLICATION;
                 else if (isDiv(c))
-                    type = ARITHMETIC_OPERATOR_DIVISION;
+                    type = TokenType.ARITHMETIC_OPERATOR_DIVISION;
                 else
                     throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'");
 
@@ -192,17 +190,17 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
                 return returnToken(type, c);
             case TWELVE:
                 if (isComma(c))
-                    type = SPECIAL_CHARACTER_COMMA;
+                    type = TokenType.SPECIAL_CHARACTER_COMMA;
                 else if (isSemicolon(c))
-                    type = SPECIAL_CHARACTER_SEMICOLON;
+                    type = TokenType.SPECIAL_CHARACTER_SEMICOLON;
                 else if (isOpenParentesis(c))
-                    type = SPECIAL_CHARACTER_OPEN_PARENTHESIS;
+                    type = TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS;
                 else if (isCloseParentesis(c))
-                    type = SPECIAL_CHARACTER_CLOSE_PARENTHESIS;
+                    type = TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS;
                 else if (isOpenCurlyBracket(c))
-                    type = SPECIAL_CHARACTER_OPEN_CURLY_BRACKET;
+                    type = TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET;
                 else if (isCloseCurlyBracket(c))
-                    type = SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET;
+                    type = TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET;
                 else
                     throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'");
 
@@ -215,11 +213,11 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
                     c = previousChar();
 
                 if (isLessThan(c))
-                    state = FOURTEEN;
+                    state = State.FOURTEEN;
                 else if (isGreaterThan(c))
-                    state = SEVENTEEN;
+                    state = State.SEVENTEEN;
                 else if (isDiff(c))
-                    state = TWENTY;
+                    state = State.TWENTY;
                 else
                     throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'");
 
@@ -227,50 +225,50 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
             case FOURTEEN:
                 c = nextChar();
                 if (isEquals(c))
-                    state = FIFTHTEEN;
+                    state = State.FIFTHTEEN;
                 else
-                    state = SIXTEEN;
+                    state = State.SIXTEEN;
                 break;
             case FIFTHTEEN:
-                return returnToken(RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO, c);
+                return returnToken(TokenType.RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO, c);
             case SIXTEEN:
-                return returnToken(RELATIONAL_OPERATOR_LESS_THAN, c);
+                return returnToken(TokenType.RELATIONAL_OPERATOR_LESS_THAN, c);
             case SEVENTEEN:
                 c = nextChar();
                 if (isEquals(c))
-                    state = EIGHTEEN;
+                    state = State.EIGHTEEN;
                 else
-                    state = NINETEEN;
+                    state = State.NINETEEN;
                 break;
             case EIGHTEEN:
-                return returnToken(RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO, c);
+                return returnToken(TokenType.RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO, c);
             case NINETEEN:
-                return returnToken(RELATIONAL_OPERATOR_GREATER_THAN, c);
+                return returnToken(TokenType.RELATIONAL_OPERATOR_GREATER_THAN, c);
             case TWENTY:
                 append(c);
                 c = nextChar();
                 if (isEquals(c))
-                    state = TWENTY_ONE;
+                    state = State.TWENTY_ONE;
                 else
                     throw new UnrecognizedTokenException("Unrecognized operator - '" + (scanned + c) + "'");
                 break;
             case TWENTY_ONE:
-                return returnToken(RELATIONAL_OPERATOR_DIFFERENT, c);
+                return returnToken(TokenType.RELATIONAL_OPERATOR_DIFFERENT, c);
             case TWENTY_TWO:
                 scanned = String.valueOf(c);    //Para remover o (') que foi appendido
                 if (isChar(c))
-                    state = TWENTY_THREE;
+                    state = State.TWENTY_THREE;
                 else
                     throw new MalformedTokenException("Malformed char - (" + scanned + ")");
                 break;
             case TWENTY_THREE:
                 if (isSingleQuotes(c))
-                    state = TWENTY_FOUR;
+                    state = State.TWENTY_FOUR;
                 else
                     throw new MalformedTokenException("Malformed char - (" + (scanned + c) + ")");
                 break;
             case TWENTY_FOUR:
-                return returnToken(CHAR);
+                return returnToken(TokenType.CHAR);
             default:
                 throw new IllegalStateException("Estado inválido: " + state);
         }
@@ -298,7 +296,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
 
     private void resetState() {
         scanned = "";
-        state = ZERO;
+        state = State.ZERO;
     }
 
 }
