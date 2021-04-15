@@ -18,7 +18,7 @@ import static compiler.util.Utils.*;
 @Slf4j
 public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada caracter lido por linha) as mensagens de erro
 
-    private char[] content;     //TODO criar uma classe de erro pai LexicalException
+    private char[] content;
     private State state;
     private int posicao;
     private String scanned;
