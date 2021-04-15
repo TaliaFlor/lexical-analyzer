@@ -16,9 +16,9 @@ import static compiler.model.TokenType.*;
 import static compiler.util.Utils.*;
 
 @Slf4j
-public class LexicalScanner {
+public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada caracter lido por linha) as mensagens de erro
 
-    private char[] content;
+    private char[] content;     //TODO criar uma classe de erro pai LexicalException
     private State state;
     private int posicao;
     private String scanned;
@@ -84,7 +84,7 @@ public class LexicalScanner {
         }
     }
 
-    public Token automaton(char c) {
+    public Token automaton(char c) {    //TODO quebrar esse método
         TokenType type;
         switch (state) {
             case ZERO:
