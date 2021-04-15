@@ -69,6 +69,20 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         scanned += currentChar;
     }
 
+    private void setState(State state) {
+        this.state = state;
+    }
+
+    private void setStateAndAppendChar(State state, char c) {
+        append(c);
+        setState(state);
+    }
+
+    private void setStateAndNotMove(State state) {
+        back();
+        setState(state);
+    }
+
     public Token nextToken() {
         if (isEOF())
             return null;
