@@ -1,5 +1,6 @@
 package compiler.scanner;
 
+import compiler.exception.LexicalException;
 import compiler.exception.MalformedTokenException;
 import compiler.exception.UnrecognizedTokenException;
 import compiler.model.State;
@@ -96,8 +97,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         }
     }
 
-    public Token automaton(char c) {    //TODO quebrar esse método
-        TokenType type;
+    public Token automaton(char c) {
         switch (state) {
             case ZERO:
                 stateZero(c);
@@ -162,7 +162,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
             case TWENTY_FOUR:
                 return returnToken(TokenType.CHAR);
             default:
-                throw new IllegalStateException("Estado inválido: " + state);
+                throw new LexicalException("Estado inválido: " + state);
         }
         return null;
     }
@@ -285,7 +285,6 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
     private void stateSix(char c) {
         if (isUnderline(c) || isLetter(c) || isNumber(c)) {
             append(c);
-            return;
         } else if (isOther(c)) {
             back();
             state = State.SEVEN;
@@ -317,7 +316,6 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
     private void stateOne(char c) {
         if (isNumber(c)) {
             append(c);
-            return;
         } else if (isDot(c)) {
             append(c);
             state = State.THREE;
