@@ -6,7 +6,7 @@ public class ReadCodeTest {
 //
 //    @BeforeAll
 //    static void initAll() {
-//        lexicalScanner = new LexicalScanner("somatorio.c");
+//        lexicalScanner = new LexicalScanner("src/main/resources/examples/somatorio.c");
 //    }
 //
 //    @Test
