@@ -35,7 +35,7 @@ public class Utils {
 
     // operador_relacional ::= <  |  >  |  <=  |  >=  |  ==  |  !=
     public static boolean isRelationalOperator(char c) {
-        return c == '>' || c == '<'  || c == '!';
+        return c == '>' || c == '<' || c == '!';
     }
 
     // operador_aritmético ::= "+"  |  "-"  |  "*"  |  "/"  |  "="
@@ -70,22 +70,22 @@ public class Utils {
     }
 
     // =
-    public static boolean isEquals(char c){
+    public static boolean isEquals(char c) {
         return c == '=';
     }
 
     // -
-    public static boolean isMinus(char c){
+    public static boolean isMinus(char c) {
         return c == '-';
     }
 
     // +
-    public static boolean isPlus(char c){
+    public static boolean isPlus(char c) {
         return c == '+';
     }
 
     // *
-    public static boolean isMult(char c){
+    public static boolean isMult(char c) {
         return c == '*';
     }
 
