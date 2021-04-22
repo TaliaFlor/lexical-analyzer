@@ -21,9 +21,13 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
     private State state;
     private int posicao;
     private String scanned;
+    private int line;           //TODO consertar count de linhas (off by +2)
+    private int column;         //TODO consertar count de colunas (off by -1)
 
 
     public LexicalScanner() {
+        this.line = 1;
+        this.column = 0;
         this.scanned = "";
         this.state = State.ZERO;
         this.content = new char[0];
@@ -31,6 +35,8 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
     }
 
     public LexicalScanner(String filename) {
+        this.line = 1;
+        this.column = 0;
         this.scanned = "";
         this.state = State.ZERO;
         try {
@@ -59,11 +65,18 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
     }
 
     private char nextChar() {
+        if (isEOF()) {
+            return '\0';
+        }
         return content[posicao++];
     }
 
     private boolean isEOF() {
-        return posicao == content.length;
+        return posicao >= content.length;
+    }
+
+    private boolean isEOF(char c) {
+        return c == '\0';
     }
 
     private void append(char currentChar) {
@@ -91,6 +104,8 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         char currentChar;
         while (true) {
             currentChar = nextChar();
+            if (!isEOF(currentChar))
+                column++;
             Token token = automaton(currentChar);
             if (token != null)
                 return token;
@@ -100,7 +115,29 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
     public Token automaton(char c) {
         switch (state) {
             case ZERO:
-                stateZero(c);
+                if (isNonConsumable(c))
+                    return null;
+
+                append(c);
+                if (isNumber(c))
+                    state = State.ONE;
+                else if (isUnderline(c) || isLetter(c))
+                    state = State.SIX;
+                else if (isEquals(c))
+                    state = State.EIGHT;
+                else if (isAritmeticOperator(c))
+                    state = State.ELEVEN;
+                else if (isSpecialChar(c)) {
+                    back();
+                    state = State.TWELVE;
+                } else if (isRelationalOperator(c))
+                    state = State.THIRTEEN;
+                else if (isSingleQuotes(c))
+                    state = State.TWENTY_TWO;
+                else if (isEOF(c))
+                    return null;
+                else
+                    throw new UnrecognizedTokenException("Unrecognized symbol - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
                 break;
             case ONE:
                 stateOne(c);
@@ -162,7 +199,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
             case TWENTY_FOUR:
                 return returnToken(TokenType.CHAR);
             default:
-                throw new LexicalException("Estado inválido: " + state);
+                throw new LexicalException("Estado inválido: " + state + ". Na linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
         }
         return null;
     }
@@ -171,7 +208,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         if (isSingleQuotes(c))
             state = State.TWENTY_FOUR;
         else
-            throw new MalformedTokenException("Malformed char - (" + (scanned + c) + ")");
+            throw new MalformedTokenException("Malformed char - " + (scanned + c) + ". Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
     }
 
     private void stateTwentyTwo(char c) {
@@ -179,7 +216,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         if (isChar(c))
             state = State.TWENTY_THREE;
         else
-            throw new MalformedTokenException("Malformed char - (" + scanned + ")");
+            throw new MalformedTokenException("Malformed char - " + scanned + ". Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
     }
 
     private void stateTwenty(char c) {
@@ -188,7 +225,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         if (isEquals(c))
             state = State.TWENTY_ONE;
         else
-            throw new UnrecognizedTokenException("Unrecognized operator - '" + (scanned + c) + "'");
+            throw new UnrecognizedTokenException("Unrecognized operator - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
     }
 
     private void stateSeventeen() {
@@ -222,7 +259,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         else if (isDiff(c))
             state = State.TWENTY;
         else
-            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'");
+            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
     }
 
     private Token stateTwelve(char c) {
@@ -240,7 +277,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         else if (isCloseCurlyBracket(c))
             type = TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET;
         else
-            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'");
+            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
 
         next();
         return returnToken(type, c);
@@ -260,7 +297,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         else if (isDiv(c))
             type = TokenType.ARITHMETIC_OPERATOR_DIVISION;
         else
-            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'");
+            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
 
         next();
         next();
@@ -290,7 +327,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
             state = State.SEVEN;
         } else {
             back();
-            throw new MalformedTokenException("Malformed identifier - '" + (scanned + c) + "'");
+            throw new MalformedTokenException("Malformed identifier - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
         }
     }
 
@@ -326,39 +363,15 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
             throwMalformedNumberException(c);
     }
 
-    private void stateZero(char c) {
-        if (isNonConsumable(c))
-            return;
-
-        append(c);
-        if (isNumber(c))
-            state = State.ONE;
-        else if (isUnderline(c) || isLetter(c))
-            state = State.SIX;
-        else if (isEquals(c))
-            state = State.EIGHT;
-        else if (isAritmeticOperator(c))
-            state = State.ELEVEN;
-        else if (isSpecialChar(c)) {
-            back();
-            state = State.TWELVE;
-        } else if (isRelationalOperator(c))
-            state = State.THIRTEEN;
-        else if (isSingleQuotes(c))
-            state = State.TWENTY_TWO;
-        else
-            throw new UnrecognizedTokenException("Unrecognized symbol - '" + (scanned + c) + "'");
-    }
-
     private void throwMalformedNumberException(char c) {
-        throw new MalformedTokenException("Malformed number - '" + (scanned + c) + "'");
+        throw new MalformedTokenException("Malformed number - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
     }
 
     private Token returnToken(TokenType type) {
         String text = scanned.trim();
         back();
         resetState();
-        return new Token(type, text);
+        return new Token(type, text, line, (column - text.length()));
     }
 
     private Token returnToken(TokenType type, char c) {
@@ -366,12 +379,25 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         back();
         append(c);
         resetState();
-        return new Token(type, text);
+        return new Token(type, text, line, (column - text.length()));
     }
 
     private void resetState() {
         scanned = "";
         state = State.ZERO;
+    }
+
+    // Caracteres não consumíveis
+    public boolean isNonConsumable(char c) {
+        if (c == '\n' || c == '\r') {
+            line++;
+            column = 0;
+        }
+        return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+    }
+
+    public boolean isOther(char c) {
+        return isNonConsumable(c) || isSpecialChar(c) || isAritmeticOperator(c) || isRelationalOperator(c);
     }
 
 }

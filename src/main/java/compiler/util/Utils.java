@@ -49,11 +49,6 @@ public class Utils {
                 || c == ',' || c == ';';
     }
 
-    // Caracteres não consumíveis
-    public static boolean isNonConsumable(char c) {
-        return c == ' ' || c == '\t' || c == '\n' || c == '\r';
-    }
-
     //  palavra_reservada ::= main  |  if  |  else  |  while  |  do  |  for  |  int  |  float  |  char
     public static boolean isReservedWord(String cadeia) {
         return RESERVED_WORDS.containsValue(cadeia.trim());
@@ -137,10 +132,6 @@ public class Utils {
     // >
     public static boolean isDiff(char c) {
         return c == '!';
-    }
-
-    public static boolean isOther(char c) {
-        return isNonConsumable(c) || isSpecialChar(c) || isAritmeticOperator(c) || isRelationalOperator(c);
     }
 
     public static boolean isSingleQuotes(char c) {
