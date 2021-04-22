@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static compiler.util.Utils.*;
+import static compiler.util.Validation.*;
 
 @Slf4j
 public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada caracter lido por linha) as mensagens de erro
@@ -204,83 +204,63 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         return null;
     }
 
-    private void stateTwentyThree(char c) {
-        if (isSingleQuotes(c))
-            state = State.TWENTY_FOUR;
-        else
-            throw new MalformedTokenException("Malformed char - " + (scanned + c) + ". Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
+    private void stateOne(char c) {
+        if (isNumber(c)) {
+            append(c);
+        } else if (isDot(c)) {
+            append(c);
+            state = State.THREE;
+        } else if (isNonConsumable(c) || !isLetter(c)) {
+            back();
+            state = State.TWO;
+        } else
+            throwMalformedNumberException(c);
     }
 
-    private void stateTwentyTwo(char c) {
-        scanned = String.valueOf(c);    //Para remover o (') que foi appendido
-        if (isChar(c))
-            state = State.TWENTY_THREE;
+    private void stateThree(char c) {
+        if (isNumber(c))
+            state = State.FOUR;
         else
-            throw new MalformedTokenException("Malformed char - " + scanned + ". Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
-    }
-
-    private void stateTwenty(char c) {
+            throwMalformedNumberException(c);
         append(c);
-        c = nextChar();
-        if (isEquals(c))
-            state = State.TWENTY_ONE;
-        else
-            throw new UnrecognizedTokenException("Unrecognized operator - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
     }
 
-    private void stateSeventeen() {
-        char c;
-        c = nextChar();
-        if (isEquals(c))
-            state = State.EIGHTEEN;
-        else
-            state = State.NINETEEN;
+    private void stateFour(char c) {
+        if (isNumber(c)) {
+            append(c);
+        } else if (!isLetter(c)) {
+            back();
+            state = State.FIVE;
+        } else {
+            throwMalformedNumberException(c);
+        }
     }
 
-    private void stateFourteen() {
-        char c;
-        c = nextChar();
-        if (isEquals(c))
-            state = State.FIFTHTEEN;
-        else
-            state = State.SIXTEEN;
+    private void stateSix(char c) {
+        if (isUnderline(c) || isLetter(c) || isNumber(c)) {
+            append(c);
+        } else if (isOther(c)) {
+            back();
+            state = State.SEVEN;
+        } else {
+            back();
+            throw new MalformedTokenException("Malformed identifier - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
+        }
     }
 
-    private void stateThirteen(char c) {
+    private Token stateSeven() {
+        if (isReservedWord(scanned))
+            return returnToken(TokenType.RESERVED_WORD);
+        else
+            return returnToken(TokenType.IDENTIFIER);
+    }
+
+    private void stateEight(char c) {
         append(c);
-
-        if (!isRelationalOperator(c))
-            c = previousChar();
-
-        if (isLessThan(c))
-            state = State.FOURTEEN;
-        else if (isGreaterThan(c))
-            state = State.SEVENTEEN;
-        else if (isDiff(c))
-            state = State.TWENTY;
+        if (isEquals(c))
+            state = State.TEN;
         else
-            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
-    }
-
-    private Token stateTwelve(char c) {
-        TokenType type;
-        if (isComma(c))
-            type = TokenType.SPECIAL_CHARACTER_COMMA;
-        else if (isSemicolon(c))
-            type = TokenType.SPECIAL_CHARACTER_SEMICOLON;
-        else if (isOpenParentesis(c))
-            type = TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS;
-        else if (isCloseParentesis(c))
-            type = TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS;
-        else if (isOpenCurlyBracket(c))
-            type = TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET;
-        else if (isCloseCurlyBracket(c))
-            type = TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET;
-        else
-            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
-
-        next();
-        return returnToken(type, c);
+            state = State.NINE;
     }
 
     private Token stateEleven(char c) {
@@ -304,63 +284,83 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         return returnToken(type, c);
     }
 
-    private void stateEight(char c) {
+    private Token stateTwelve(char c) {
+        TokenType type;
+        if (isComma(c))
+            type = TokenType.SPECIAL_CHARACTER_COMMA;
+        else if (isSemicolon(c))
+            type = TokenType.SPECIAL_CHARACTER_SEMICOLON;
+        else if (isOpenParentesis(c))
+            type = TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS;
+        else if (isCloseParentesis(c))
+            type = TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS;
+        else if (isOpenCurlyBracket(c))
+            type = TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET;
+        else if (isCloseCurlyBracket(c))
+            type = TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET;
+        else
+            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
+
+        next();
+        return returnToken(type, c);
+    }
+
+    private void stateThirteen(char c) {
         append(c);
+
+        if (!isRelationalOperator(c))
+            c = previousChar();
+
+        if (isLessThan(c))
+            state = State.FOURTEEN;
+        else if (isGreaterThan(c))
+            state = State.SEVENTEEN;
+        else if (isDiff(c))
+            state = State.TWENTY;
+        else
+            throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
+    }
+
+    private void stateFourteen() {
+        char c;
+        c = nextChar();
         if (isEquals(c))
-            state = State.TEN;
+            state = State.FIFTHTEEN;
         else
-            state = State.NINE;
+            state = State.SIXTEEN;
     }
 
-    private Token stateSeven() {
-        if (isReservedWord(scanned))
-            return returnToken(TokenType.RESERVED_WORD);
+    private void stateSeventeen() {
+        char c;
+        c = nextChar();
+        if (isEquals(c))
+            state = State.EIGHTEEN;
         else
-            return returnToken(TokenType.IDENTIFIER);
+            state = State.NINETEEN;
     }
 
-    private void stateSix(char c) {
-        if (isUnderline(c) || isLetter(c) || isNumber(c)) {
-            append(c);
-        } else if (isOther(c)) {
-            back();
-            state = State.SEVEN;
-        } else {
-            back();
-            throw new MalformedTokenException("Malformed identifier - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
-        }
-    }
-
-    private void stateFour(char c) {
-        if (isNumber(c)) {
-            append(c);
-        } else if (!isLetter(c)) {
-            back();
-            state = State.FIVE;
-        } else {
-            throwMalformedNumberException(c);
-        }
-    }
-
-    private void stateThree(char c) {
-        if (isNumber(c))
-            state = State.FOUR;
-        else
-            throwMalformedNumberException(c);
+    private void stateTwenty(char c) {
         append(c);
+        c = nextChar();
+        if (isEquals(c))
+            state = State.TWENTY_ONE;
+        else
+            throw new UnrecognizedTokenException("Unrecognized operator - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
     }
 
-    private void stateOne(char c) {
-        if (isNumber(c)) {
-            append(c);
-        } else if (isDot(c)) {
-            append(c);
-            state = State.THREE;
-        } else if (isNonConsumable(c) || !isLetter(c)) {
-            back();
-            state = State.TWO;
-        } else
-            throwMalformedNumberException(c);
+    private void stateTwentyTwo(char c) {
+        scanned = String.valueOf(c);    //Para remover o (') que foi appendido
+        if (isChar(c))
+            state = State.TWENTY_THREE;
+        else
+            throw new MalformedTokenException("Malformed char - " + scanned + ". Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
+    }
+
+    private void stateTwentyThree(char c) {
+        if (isSingleQuotes(c))
+            state = State.TWENTY_FOUR;
+        else
+            throw new MalformedTokenException("Malformed char - " + (scanned + c) + ". Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
     }
 
     private void throwMalformedNumberException(char c) {

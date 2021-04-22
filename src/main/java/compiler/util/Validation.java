@@ -3,7 +3,7 @@ package compiler.util;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Utils {
+public class Validation {
 
     private static final Map<Integer, String> RESERVED_WORDS = new HashMap<Integer, String>() {{
         put(1, "main");
