@@ -19,4 +19,9 @@ public class Token {
         return type + " -> " + text;
     }
 
+
+    public String lineByColumn() {      // Line 3 and column 4 (3:4).
+        return "Line " + line + " and column " + column + " (" + line + ":" + column + ").";
+    }
+
 }

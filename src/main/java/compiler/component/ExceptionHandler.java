@@ -1,7 +1,26 @@
 package compiler.component;
 
 
+import compiler.exception.SintaticalException;
+import compiler.model.Token;
+import compiler.parser.exception.TokenExpectedException;
+
 public class ExceptionHandler {
+
+    // === TokenExpectedException
+
+    public void throwReservedWordExpectedException(String reservedWord, Token token) {   // Reserved word 'main' expected!
+        throw tokenExpectedException("Reserved word '" + reservedWord + "' expected!", token);
+    }
+
+    private TokenExpectedException tokenExpectedException(String msg, Token token) {
+        return (TokenExpectedException) sintaticalException(token, msg);
+    }
+
+    private SintaticalException sintaticalException(Token token, String msg) {  // Found ARITHMETIC_OPERATOR_DIVISION --> /. Line 3 and column 4 (3:4).
+        return new SintaticalException(msg + " Found " + token.toString() + ". " + token.lineByColumn());
+    }
+
 
 //    // === UnrecognizedTokenException
 //
