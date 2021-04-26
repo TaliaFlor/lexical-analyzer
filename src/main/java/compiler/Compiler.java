@@ -1,6 +1,7 @@
 package compiler;
 
 import compiler.model.Token;
+import compiler.parser.Parser;
 import compiler.scanner.Scanner;
 import compiler.scanner.exception.MalformedTokenException;
 import compiler.scanner.exception.UnrecognizedTokenException;
@@ -16,6 +17,8 @@ public class Compiler {
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_testes.c");
 
             log.info("Start of reading");
+//            Parser parser = new Parser(scanner);
+//            parser.start();
 
             Token token;
             do {
