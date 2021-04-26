@@ -1,4 +1,6 @@
-package compiler.exception;
+package compiler.scanner.exception;
+
+import compiler.exception.LexicalException;
 
 public class MalformedTokenException extends LexicalException {
 

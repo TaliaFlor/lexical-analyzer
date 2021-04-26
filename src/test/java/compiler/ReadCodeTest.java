@@ -2,11 +2,11 @@ package compiler;
 
 public class ReadCodeTest {
 
-//    private static LexicalScanner lexicalScanner;
+//    private static Scanner lexicalScanner;
 //
 //    @BeforeAll
 //    static void initAll() {
-//        lexicalScanner = new LexicalScanner("src/main/resources/examples/somatorio.c");
+//        lexicalScanner = new Scanner("src/main/resources/examples/somatorio.c");
 //    }
 //
 //    @Test

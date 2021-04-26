@@ -1,11 +1,11 @@
 package compiler.scanner;
 
 import compiler.exception.LexicalException;
-import compiler.exception.MalformedTokenException;
-import compiler.exception.UnrecognizedTokenException;
-import compiler.model.State;
 import compiler.model.Token;
 import compiler.model.TokenType;
+import compiler.scanner.exception.MalformedTokenException;
+import compiler.scanner.exception.UnrecognizedTokenException;
+import compiler.scanner.model.State;
 import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
@@ -15,7 +15,7 @@ import java.nio.file.Paths;
 import static compiler.util.Validation.*;
 
 @Slf4j
-public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada caracter lido por linha) as mensagens de erro
+public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lido por linha) as mensagens de erro
 
     private char[] content;
     private State state;
@@ -25,7 +25,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
     private int column;         //TODO consertar count de colunas (off by -1)
 
 
-    public LexicalScanner() {
+    public Scanner() {
         this.line = 1;
         this.column = 0;
         this.scanned = "";
@@ -34,7 +34,7 @@ public class LexicalScanner {   //TODO adicionar linha (/r) e coluna (cada carac
         log.warn("No file provided as input");
     }
 
-    public LexicalScanner(String filename) {
+    public Scanner(String filename) {
         this.line = 1;
         this.column = 0;
         this.scanned = "";

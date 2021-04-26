@@ -1,4 +1,4 @@
-package compiler.model;
+package compiler.scanner.model;
 
 /**
  * <p>

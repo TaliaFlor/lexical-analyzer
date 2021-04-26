@@ -1,9 +1,9 @@
 package compiler;
 
-import compiler.exception.MalformedTokenException;
-import compiler.exception.UnrecognizedTokenException;
 import compiler.model.Token;
-import compiler.scanner.LexicalScanner;
+import compiler.scanner.Scanner;
+import compiler.scanner.exception.MalformedTokenException;
+import compiler.scanner.exception.UnrecognizedTokenException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -11,15 +11,15 @@ public class Compiler {
 
     public static void main(String[] args) {
         try {
-//            LexicalScanner lexicalScanner = new LexicalScanner("src/main/resources/examples/somatorio.c");
-            LexicalScanner lexicalScanner = new LexicalScanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
-//            LexicalScanner lexicalScanner = new LexicalScanner("src/main/resources/examples/somatorio_testes.c");
+//            Scanner scanner = new Scanner("src/main/resources/examples/somatorio.c");
+            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
+//            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_testes.c");
 
             log.info("Start of reading");
 
             Token token;
             do {
-                token = lexicalScanner.nextToken();
+                token = scanner.nextToken();
                 if (token != null)
                     System.out.println(token);
             } while (token != null);
