@@ -69,4 +69,92 @@ class ParserTest {
 
     // ===========================
 
+    // ========== COMANDO ==========
+
+    @ParameterizedTest
+    @DisplayName("Flow 'declVar' sem erros")
+    @ValueSource(strings = {"{ int a = 3; }", "{ while (true) {} }", "{ if (true) {} else {} }"})
+    void testComando_Sucess(String input) {
+        // given
+        scanner = new Scanner(input, true);
+        parser = new Parser(scanner);
+
+        // when + then
+        Assertions.assertDoesNotThrow(() -> parser.comando());
+    }
+
+    // ===========================
+
+    // ========== DECL_VAR ==========
+
+    @ParameterizedTest
+    @DisplayName("Flow 'declVar' sem erros")
+    @ValueSource(strings = {"int a = 3;"})
+    void testDeclVar_Sucess(String input) {
+        // given
+        scanner = new Scanner(input, true);
+        parser = new Parser(scanner);
+
+        // when + then
+        Assertions.assertDoesNotThrow(() -> parser.declVar());
+    }
+
+    // ===========================
+
+    // ========== TIPO ==========
+
+    @ParameterizedTest
+    @DisplayName("Flow 'tipo' sem erros")
+    @ValueSource(strings = {"int  ", "float  ", "char  "})
+    void testTipo_Sucess(String input) {
+        // given
+        scanner = new Scanner(input, true);
+        parser = new Parser(scanner);
+
+        // when + then
+        Assertions.assertDoesNotThrow(() -> parser.tipo());
+    }
+
+    @ParameterizedTest
+    @DisplayName("Flow 'tipo' com erros")
+    @ValueSource(strings = {"main  ", "=  ", "for  "})
+    void testTipo_Error(String input) {
+        // given
+        scanner = new Scanner(input, true);
+        parser = new Parser(scanner);
+
+        // when + then
+        Assertions.assertThrows(TokenExpectedException.class, () -> parser.tipo());
+    }
+
+    // ===========================
+
+    // ========== DECL_VAR_AUX ==========
+
+    @ParameterizedTest
+    @DisplayName("Flow 'declVarAux' sem erros")
+    @ValueSource(strings = {"x  ", "num  ", "qtyApples  "})
+    void testDeclVarAux_Sucess(String input) {
+        // given
+        scanner = new Scanner(input, true);
+        parser = new Parser(scanner);
+
+        // when + then
+        Assertions.assertDoesNotThrow(() -> parser.declVarAux());
+    }
+
+    @ParameterizedTest
+    @DisplayName("Flow 'declVarAux' com erros")
+    @ValueSource(strings = {"main  ", "if  ", "int  "})
+    void testDeclVarAux_Error(String input) {
+        // given
+        scanner = new Scanner(input, true);
+        parser = new Parser(scanner);
+
+        // when + then
+        Assertions.assertThrows(TokenExpectedException.class, () -> parser.declVarAux());
+    }
+
+    // ===========================
+
 }

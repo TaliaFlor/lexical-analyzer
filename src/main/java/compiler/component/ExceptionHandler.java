@@ -9,8 +9,30 @@ public class ExceptionHandler {
 
     // === TokenExpectedException
 
+    public void throwIdentifierExpectedException(Token token) {   // Identifier expected!
+        throw tokenExpectedException("Identifier expected!", token);
+    }
+
     public void throwReservedWordExpectedException(String reservedWord, Token token) {   // Reserved word 'main' expected!
         throw tokenExpectedException("Reserved word '" + reservedWord + "' expected!", token);
+    }
+
+    public void throwReservedWordExpectedException(String[] reservedWords, Token token) {   // Reserved word 'int', 'float' or 'char' expected!
+        throw tokenExpectedException("Reserved words " + arrayOfReservedWords(reservedWords) + " expected!", token);
+    }
+
+    private String arrayOfReservedWords(String[] reservedWords)  {      // {"int", "float", "char"}
+        StringBuilder msg = new StringBuilder();
+        for (int i = 0; i < reservedWords.length; i++) {
+            String reservedWord = reservedWords[i];
+            if (i == (reservedWords.length - 1)) {
+                msg.delete(msg.length() - 2, msg.length());             // 'float',  --> 'float'
+                msg.append(" or '").append(reservedWord).append("'");   // 'int', 'float' or 'char'
+            } else {
+                msg.append("'").append(reservedWord).append("', ");     // msg = 'int', 'float',
+            }
+        }
+        return msg.toString();
     }
 
     public void throwSpecialCharacterExpectedException(char specialCharacter, Token token) {   // Reserved word 'main' expected!
