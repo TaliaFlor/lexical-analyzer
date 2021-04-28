@@ -13,12 +13,16 @@ public class ExceptionHandler {
         throw tokenExpectedException("Reserved word '" + reservedWord + "' expected!", token);
     }
 
-    private TokenExpectedException tokenExpectedException(String msg, Token token) {
-        return (TokenExpectedException) sintaticalException(token, msg);
+    public void throwSpecialCharacterExpectedException(char specialCharacter, Token token) {   // Reserved word 'main' expected!
+        throw tokenExpectedException("Special character '" + specialCharacter + "' expected!", token);
     }
 
-    private SintaticalException sintaticalException(Token token, String msg) {  // Found ARITHMETIC_OPERATOR_DIVISION --> /. Line 3 and column 4 (3:4).
-        return new SintaticalException(msg + " Found " + token.toString() + ". " + token.lineByColumn());
+    private TokenExpectedException tokenExpectedException(String msg, Token token) {
+        return new TokenExpectedException(errorMsg(token, msg));
+    }
+
+    private String errorMsg(Token token, String msg) {  // msg + Found ARITHMETIC_OPERATOR_DIVISION --> /. Line 3 and column 4 (3:4).
+        return msg + " Found " + token.toString() + ". " + token.lineByColumn();
     }
 
 

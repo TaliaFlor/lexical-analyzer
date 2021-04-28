@@ -12,7 +12,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import static compiler.util.Validation.*;
+import static compiler.scanner.component.ScannerValidation.*;
 
 @Slf4j
 public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lido por linha) as mensagens de erro
@@ -32,6 +32,14 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
         this.state = State.ZERO;
         this.content = new char[0];
         log.warn("No file provided as input");
+    }
+
+    public Scanner(String input, boolean test) {
+        this.line = 1;
+        this.column = 0;
+        this.scanned = "";
+        this.state = State.ZERO;
+        this.content = input.toCharArray();
     }
 
     public Scanner(String filename) {
@@ -250,9 +258,34 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
 
     private Token stateSeven() {
         if (isReservedWord(scanned))
-            return returnToken(TokenType.RESERVED_WORD);
+            return returnToken(reservedWordType());
         else
             return returnToken(TokenType.IDENTIFIER);
+    }
+
+    private TokenType reservedWordType() {
+        switch (scanned.trim()) {
+            case "int":
+                return TokenType.RESERVED_WORD_INT;
+            case "float":
+                return TokenType.RESERVED_WORD_FLOAT;
+            case "char":
+                return TokenType.RESERVED_WORD_CHAR;
+            case "main":
+                return TokenType.RESERVED_WORD_MAIN;
+            case "if":
+                return TokenType.RESERVED_WORD_IF;
+            case "else":
+                return TokenType.RESERVED_WORD_ELSE;
+            case "while":
+                return TokenType.RESERVED_WORD_WHILE;
+            case "do":
+                return TokenType.RESERVED_WORD_DO;
+            case "for":
+                return TokenType.RESERVED_WORD_FOR;
+            default:
+                throw new IllegalStateException("Palavra reservada inválida: " + scanned);
+        }
     }
 
     private void stateEight(char c) {

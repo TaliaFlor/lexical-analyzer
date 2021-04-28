@@ -1,11 +1,11 @@
 package compiler.scanner.util;
 
-import compiler.model.State;
 import compiler.model.Token;
 import compiler.model.TokenType;
 import compiler.scanner.exception.MalformedTokenException;
+import compiler.scanner.model.State;
 
-import static compiler.util.Validation.*;
+import static compiler.scanner.component.ScannerValidation.*;
 
 public class ScannerUtil {
 

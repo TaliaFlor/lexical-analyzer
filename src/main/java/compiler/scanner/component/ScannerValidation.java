@@ -1,9 +1,9 @@
-package compiler.util;
+package compiler.scanner.component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Validation {
+public class ScannerValidation {
 
     private static final Map<Integer, String> RESERVED_WORDS = new HashMap<Integer, String>() {{
         put(1, "main");
