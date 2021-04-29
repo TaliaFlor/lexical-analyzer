@@ -1,11 +1,14 @@
 package compiler.component;
 
 
-import compiler.exception.SintaticalException;
 import compiler.model.Token;
 import compiler.parser.exception.TokenExpectedException;
+import compiler.util.Util;
 
 public class ExceptionHandler {
+
+    private final Util util = new Util();
+
 
     // === TokenExpectedException
 
@@ -18,21 +21,7 @@ public class ExceptionHandler {
     }
 
     public void throwReservedWordExpectedException(String[] reservedWords, Token token) {   // Reserved word 'int', 'float' or 'char' expected!
-        throw tokenExpectedException("Reserved words " + arrayOfReservedWords(reservedWords) + " expected!", token);
-    }
-
-    private String arrayOfReservedWords(String[] reservedWords)  {      // {"int", "float", "char"}
-        StringBuilder msg = new StringBuilder();
-        for (int i = 0; i < reservedWords.length; i++) {
-            String reservedWord = reservedWords[i];
-            if (i == (reservedWords.length - 1)) {
-                msg.delete(msg.length() - 2, msg.length());             // 'float',  --> 'float'
-                msg.append(" or '").append(reservedWord).append("'");   // 'int', 'float' or 'char'
-            } else {
-                msg.append("'").append(reservedWord).append("', ");     // msg = 'int', 'float',
-            }
-        }
-        return msg.toString();
+        throw tokenExpectedException("Reserved words " + util.stringfy(reservedWords) + " expected!", token);
     }
 
     public void throwSpecialCharacterExpectedException(char specialCharacter, Token token) {
@@ -43,22 +32,8 @@ public class ExceptionHandler {
         throw tokenExpectedException("Arithmetic operator '" + arithmeticOperator + "' expected!", token);
     }
 
-    public void throwArithmeticOperatorExpectedException(char[] arithmeticOperators, Token token) {
-        throw tokenExpectedException("Arithmetic operators " + arrayOfArithmeticOperators(arithmeticOperators) + " expected!", token);
-    }
-
-    private String arrayOfArithmeticOperators(char[] arithmeticOperators)  {
-        StringBuilder msg = new StringBuilder();
-        for (int i = 0; i < arithmeticOperators.length; i++) {
-            char arithmeticOperator = arithmeticOperators[i];
-            if (i == (arithmeticOperators.length - 1)) {
-                msg.delete(msg.length() - 2, msg.length());
-                msg.append(" or '").append(arithmeticOperator).append("'");
-            } else {
-                msg.append("'").append(arithmeticOperator).append("', ");
-            }
-        }
-        return msg.toString();
+    public void throwArithmeticOperatorExpectedException(String[] arithmeticOperators, Token token) {
+        throw tokenExpectedException("Arithmetic operators " + util.stringfy(arithmeticOperators) + " expected!", token);
     }
 
     public void throwRelationalOperatorExpectedException(String relationalOperator, Token token) {
@@ -66,22 +41,11 @@ public class ExceptionHandler {
     }
 
     public void throwRelationalOperatorExpectedException(String[] relationalOperators, Token token) {   // Reserved word 'int', 'float' or 'char' expected!
-        throw tokenExpectedException("Relational operators " + arrayOfRelationalOperators(relationalOperators) + " expected!", token);
+        throw tokenExpectedException("Relational operators " + util.stringfy(relationalOperators) + " expected!", token);
     }
 
-    private String arrayOfRelationalOperators(String[] relationalOperators)  {
-        StringBuilder msg = new StringBuilder();
-        for (int i = 0; i < relationalOperators.length; i++) {
-            String relationalOperator = relationalOperators[i];
-            if (i == (relationalOperators.length - 1)) {
-                msg.delete(msg.length() - 2, msg.length());
-                msg.append(" or '").append(relationalOperator).append("'");
-            } else {
-                msg.append("'").append(relationalOperator).append("', ");
-            }
-        }
-        return msg.toString();
-    }
+
+    // ======= HELPER METHODS =======
 
     private TokenExpectedException tokenExpectedException(String msg, Token token) {
         return new TokenExpectedException(errorMsg(token, msg));
@@ -90,65 +54,5 @@ public class ExceptionHandler {
     private String errorMsg(Token token, String msg) {  // msg + Found ARITHMETIC_OPERATOR_DIVISION --> /. Line 3 and column 4 (3:4).
         return msg + " Found " + token.toString() + ". " + token.lineByColumn();
     }
-
-
-//    // === UnrecognizedTokenException
-//
-//    public void throwUnrecognizedSymbolException(char c) {
-//        throw unrecognizedTokenException("symbol", c);
-//    }
-//
-//    public void throwUnrecognizedOperatorException(char c) {
-//        throw unrecognizedTokenException("operator", c);
-//    }
-//
-//    public void throwUnrecognizedTokenException(char c) {
-//        throw unrecognizedTokenException("token", c);
-//    }
-//
-//    private UnrecognizedTokenException unrecognizedTokenException(String type, char c) {
-//        return (UnrecognizedTokenException) lexicalException("Unrecognized " + type, c);
-//    }
-//
-//    // === MalformedTokenException
-//
-//    public void throwMalformedNumberException(char c) {
-//        throw malformedTokenException("number", c);
-//    }
-//
-//    public void throwMalformedCharException(char c) {
-//        throw malformedTokenException("char", c);
-//    }
-//
-//    public void throwMalformedIdentifierException(char c) {
-//        throw malformedTokenException("identifier", c);
-//    }
-//
-//    private MalformedTokenException malformedTokenException(String type, char c) {
-//        return (MalformedTokenException) lexicalException("Malformed " + type, c);
-//    }
-//
-//    // === InvalidStateException
-//
-//    public void throwInvalidStateException(State state) {
-//        throw (InvalidStateException) lexicalException("Invalid state", state);
-//    }
-//
-//    // === LexicalException
-//
-//    private LexicalException lexicalException(String message, char c) {
-//        return new LexicalException(message + " - '" + (scanned + c) + "'" + lineAndColumn());
-//    }
-//
-//    private LexicalException lexicalException(String message, State state) {
-//        return new LexicalException(message + " - '" + state + "'" + lineAndColumn());
-//    }
-//
-//    // === Helpers
-//
-//    private String lineAndColumn() {    // Line 3 and column 4 (3:4)
-//        String coluna = column - scanned.length();
-//        return ". Line " + line + " and column " + coluna + " (" + line + ":" + coluna + ")";
-//    }
 
 }

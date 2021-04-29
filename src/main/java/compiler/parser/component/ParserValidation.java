@@ -153,7 +153,7 @@ public class ParserValidation {
     public void termoAux(boolean nextToken) {
         tokenType(nextToken);
         if (tokenType != TokenType.ARITHMETIC_OPERATOR_MULTIPLICATION && tokenType != TokenType.ARITHMETIC_OPERATOR_DIVISION)
-            exceptionHandler.throwArithmeticOperatorExpectedException(new char[]{'*', '/'}, token);
+            exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"*", "/"}, token);
     }
 
     public void expressaoAritmeticaAux() {
@@ -163,7 +163,7 @@ public class ParserValidation {
     public void expressaoAritmeticaAux(boolean nextToken) {
         tokenType(nextToken);
         if (tokenType != TokenType.ARITHMETIC_OPERATOR_SUM && tokenType != TokenType.ARITHMETIC_OPERATOR_SUBTRACTION)
-            exceptionHandler.throwArithmeticOperatorExpectedException(new char[]{'+', '-'}, token);
+            exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"+", "-"}, token);
     }
 
     // ======= CONJUNTOS FIRST =======
