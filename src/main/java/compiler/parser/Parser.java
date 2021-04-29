@@ -154,7 +154,7 @@ public class Parser {
         expressaoRelacional(NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void expressaoRelacional(boolean nextToken) {    //TODO
+    public void expressaoRelacional(boolean nextToken) {
         try {
             fatorOuExpressaoAritmetica(nextToken);
             expressaoRelacionalAux();
@@ -180,19 +180,111 @@ public class Parser {
     }
 
     private void expressaoRelacionalAux(boolean nextToken) {
+        validate.relationalOperator(nextToken);
+        fatorOuExpressaoAritmetica();
     }
 
     public void expressaoLogica() {
         expressaoLogica(NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void expressaoLogica(boolean nextToken) {
+    public void expressaoLogica(boolean nextToken) {    // TODO
     }
 
     public void iteracao() {
+        try {
+            validate._while();
+            condicao();
+            bloco();
+        } catch (TokenExpectedException e) {
+            try {
+                validate._do(NEXT_TOKEN_FLAG_FALSE);
+                bloco();
+                validate._while();
+                condicao();
+                validate.semicolon();
+            } catch (TokenExpectedException e1) {
+                validate._for(NEXT_TOKEN_FLAG_FALSE);
+                validate.openParentesis();
+                declaracao();
+                validate.semicolon();
+                expressaoRelacional();
+                validate.semicolon();
+                counter();
+                validate.closeParentesis();
+                bloco();
+            }
+        }
+    }
+
+    private void condicao() {
+        validate.openParentesis();
+        condicaoAux();
+        validate.closeParentesis();
+    }
+
+    private void condicaoAux() {    //TODO
+
+    }
+
+    private void counter() {
+        validate.identifier();
+        counterAux();
+        validate.semicolon();
+    }
+
+    private void counterAux() {
+        try {
+            sumOrMinus();
+            sumOrMinus(NEXT_TOKEN_FLAG_FALSE);
+            condicaoAux2();
+        } catch (TokenExpectedException e) {
+            validate.attribution(NEXT_TOKEN_FLAG_FALSE);
+            validate.identifier();
+            validate.arithmeticOperator();
+            validate.integer();
+        }
+    }
+
+    public void sumOrMinus() {
+        sumOrMinus(NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void sumOrMinus(boolean nextToken) {
+        validate.sumOrMinus();
+    }
+
+    private void condicaoAux2() {
+        try {
+            sumOrMinus();
+        } catch (TokenExpectedException e) {
+            validate.attribution(NEXT_TOKEN_FLAG_FALSE);
+            validate.integer();
+        }
     }
 
     public void decisao() {
+        validate._if();
+        condicao();
+        bloco();
+        _else();
+    }
+
+    private void _else() {
+        try {
+            validate._else();
+            elseAux();
+        } catch (TokenExpectedException e) {
+            validate.closeCurlyBracket(NEXT_TOKEN_FLAG_FALSE);
+        }
+    }
+
+    private void elseAux() {
+        try {
+            decisao();
+        } catch (TokenExpectedException e) {
+            bloco();
+        }
     }
 
 }

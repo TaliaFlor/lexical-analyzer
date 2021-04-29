@@ -16,6 +16,10 @@ public class ExceptionHandler {
         throw tokenExpectedException("Identifier expected!", token);
     }
 
+    public void throwIntegerExpectedException(Token token) {
+        throw tokenExpectedException("Integer expected!", token);
+    }
+
     public void throwReservedWordExpectedException(String reservedWord, Token token) {   // Reserved word 'main' expected!
         throw tokenExpectedException("Reserved word '" + reservedWord + "' expected!", token);
     }

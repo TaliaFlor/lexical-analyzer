@@ -40,6 +40,56 @@ public class ParserValidation {
             exceptionHandler.throwIdentifierExpectedException(token);
     }
 
+    public void _while() {
+        _while(NEXT_TOKEN_FLAG);
+    }
+
+    public void _while(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.RESERVED_WORD_WHILE)
+            exceptionHandler.throwReservedWordExpectedException("while", token);
+    }
+
+    public void _do() {
+        _do(NEXT_TOKEN_FLAG);
+    }
+
+    public void _do(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.RESERVED_WORD_DO)
+            exceptionHandler.throwReservedWordExpectedException("do", token);
+    }
+
+    public void _for() {
+        _for(NEXT_TOKEN_FLAG);
+    }
+
+    public void _for(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.RESERVED_WORD_FOR)
+            exceptionHandler.throwReservedWordExpectedException("for", token);
+    }
+
+    public void _if() {
+        _if(NEXT_TOKEN_FLAG);
+    }
+
+    public void _if(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.RESERVED_WORD_IF)
+            exceptionHandler.throwReservedWordExpectedException("if", token);
+    }
+
+    public void _else() {
+        _else(NEXT_TOKEN_FLAG);
+    }
+
+    public void _else(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.RESERVED_WORD_ELSE)
+            exceptionHandler.throwReservedWordExpectedException("else", token);
+    }
+
     public void equals() {
         equals(NEXT_TOKEN_FLAG);
     }
@@ -110,6 +160,16 @@ public class ParserValidation {
             exceptionHandler.throwSpecialCharacterExpectedException('}', token);
     }
 
+    public void integer() {
+        integer(NEXT_TOKEN_FLAG);
+    }
+
+    public void integer(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.INTEGER_NUMBER)
+            exceptionHandler.throwIntegerExpectedException(token);
+    }
+
     public void relationalOperator() {
         relationalOperator(NEXT_TOKEN_FLAG);
     }
@@ -120,6 +180,28 @@ public class ParserValidation {
                 && tokenType != TokenType.RELATIONAL_OPERATOR_LESS_THAN && tokenType != TokenType.RELATIONAL_OPERATOR_GREATER_THAN
                 && tokenType != TokenType.RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO && tokenType != TokenType.RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO)
             exceptionHandler.throwRelationalOperatorExpectedException(new String[]{"==", "!=", "<", ">", "<=", ">="}, token);
+    }
+
+    public void arithmeticOperator() {
+        arithmeticOperator(NEXT_TOKEN_FLAG);
+    }
+
+    public void arithmeticOperator(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.ARITHMETIC_OPERATOR_SUM && tokenType != TokenType.ARITHMETIC_OPERATOR_SUBTRACTION
+                && tokenType != TokenType.ARITHMETIC_OPERATOR_MULTIPLICATION && tokenType != TokenType.ARITHMETIC_OPERATOR_DIVISION
+                && tokenType != TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION)
+            exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"+", "-", "*", "/", "="}, token);
+    }
+
+    public void sumOrMinus() {
+        sumOrMinus(NEXT_TOKEN_FLAG);
+    }
+
+    public void sumOrMinus(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.ARITHMETIC_OPERATOR_SUM && tokenType != TokenType.ARITHMETIC_OPERATOR_SUBTRACTION)
+            exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"+", "-"}, token);
     }
 
     // ======= AUTOMÂTOS =======
@@ -164,6 +246,53 @@ public class ParserValidation {
         tokenType(nextToken);
         if (tokenType != TokenType.ARITHMETIC_OPERATOR_SUM && tokenType != TokenType.ARITHMETIC_OPERATOR_SUBTRACTION)
             exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"+", "-"}, token);
+    }
+
+    // ======= CHECKS =======
+
+    public boolean isWhile() {
+        return isWhile(NEXT_TOKEN_FLAG);
+    }
+
+    public boolean isWhile(boolean nextToken) {
+        tokenType(nextToken);
+        return tokenType == TokenType.RESERVED_WORD_WHILE;
+    }
+
+    public boolean isDo() {
+        return isDo(NEXT_TOKEN_FLAG);
+    }
+
+    public boolean isDo(boolean nextToken) {
+        tokenType(nextToken);
+        return tokenType == TokenType.RESERVED_WORD_DO;
+    }
+
+    public boolean isFor() {
+        return isFor(NEXT_TOKEN_FLAG);
+    }
+
+    public boolean isFor(boolean nextToken) {
+        tokenType(nextToken);
+        return tokenType == TokenType.RESERVED_WORD_FOR;
+    }
+
+    public boolean isSumOrMinus() {
+        return isSumOrMinus(NEXT_TOKEN_FLAG);
+    }
+
+    public boolean isSumOrMinus(boolean nextToken) {
+        tokenType(nextToken);
+        return tokenType == TokenType.ARITHMETIC_OPERATOR_SUM || tokenType == TokenType.ARITHMETIC_OPERATOR_SUBTRACTION;
+    }
+
+    public boolean isAttribution() {
+        return isAttribution(NEXT_TOKEN_FLAG);
+    }
+
+    public boolean isAttribution(boolean nextToken) {
+        tokenType(nextToken);
+        return tokenType == TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION;
     }
 
     // ======= CONJUNTOS FIRST =======
