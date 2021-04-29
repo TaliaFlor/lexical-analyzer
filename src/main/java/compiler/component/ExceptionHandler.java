@@ -35,8 +35,52 @@ public class ExceptionHandler {
         return msg.toString();
     }
 
-    public void throwSpecialCharacterExpectedException(char specialCharacter, Token token) {   // Reserved word 'main' expected!
+    public void throwSpecialCharacterExpectedException(char specialCharacter, Token token) {
         throw tokenExpectedException("Special character '" + specialCharacter + "' expected!", token);
+    }
+
+    public void throwArithmeticOperatorExpectedException(char arithmeticOperator, Token token) {
+        throw tokenExpectedException("Arithmetic operator '" + arithmeticOperator + "' expected!", token);
+    }
+
+    public void throwArithmeticOperatorExpectedException(char[] arithmeticOperators, Token token) {
+        throw tokenExpectedException("Arithmetic operators " + arrayOfArithmeticOperators(arithmeticOperators) + " expected!", token);
+    }
+
+    private String arrayOfArithmeticOperators(char[] arithmeticOperators)  {
+        StringBuilder msg = new StringBuilder();
+        for (int i = 0; i < arithmeticOperators.length; i++) {
+            char arithmeticOperator = arithmeticOperators[i];
+            if (i == (arithmeticOperators.length - 1)) {
+                msg.delete(msg.length() - 2, msg.length());
+                msg.append(" or '").append(arithmeticOperator).append("'");
+            } else {
+                msg.append("'").append(arithmeticOperator).append("', ");
+            }
+        }
+        return msg.toString();
+    }
+
+    public void throwRelationalOperatorExpectedException(String relationalOperator, Token token) {
+        throw tokenExpectedException("Relational operator '" + relationalOperator + "' expected!", token);
+    }
+
+    public void throwRelationalOperatorExpectedException(String[] relationalOperators, Token token) {   // Reserved word 'int', 'float' or 'char' expected!
+        throw tokenExpectedException("Relational operators " + arrayOfRelationalOperators(relationalOperators) + " expected!", token);
+    }
+
+    private String arrayOfRelationalOperators(String[] relationalOperators)  {
+        StringBuilder msg = new StringBuilder();
+        for (int i = 0; i < relationalOperators.length; i++) {
+            String relationalOperator = relationalOperators[i];
+            if (i == (relationalOperators.length - 1)) {
+                msg.delete(msg.length() - 2, msg.length());
+                msg.append(" or '").append(relationalOperator).append("'");
+            } else {
+                msg.append("'").append(relationalOperator).append("', ");
+            }
+        }
+        return msg.toString();
     }
 
     private TokenExpectedException tokenExpectedException(String msg, Token token) {

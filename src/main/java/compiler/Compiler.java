@@ -1,7 +1,6 @@
 package compiler;
 
 import compiler.model.Token;
-import compiler.parser.Parser;
 import compiler.scanner.Scanner;
 import compiler.scanner.exception.MalformedTokenException;
 import compiler.scanner.exception.UnrecognizedTokenException;

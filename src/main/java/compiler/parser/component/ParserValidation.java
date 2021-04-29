@@ -30,14 +30,34 @@ public class ParserValidation {
             exceptionHandler.throwReservedWordExpectedException("main", token);
     }
 
-    public void declVarAux() {
-        declVarAux(NEXT_TOKEN_FLAG);
+    public void identifier() {
+        identifier(NEXT_TOKEN_FLAG);
     }
 
-    public void declVarAux(boolean nextToken) {
-        verifyToken(nextToken);
-        if (!conjFirstForDeclVarAux(false))
+    public void identifier(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.IDENTIFIER)
             exceptionHandler.throwIdentifierExpectedException(token);
+    }
+
+    public void equals() {
+        equals(NEXT_TOKEN_FLAG);
+    }
+
+    public void equals(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.RELATIONAL_OPERATOR_EQUAL)
+            exceptionHandler.throwRelationalOperatorExpectedException("==", token);
+    }
+
+    public void attribution() {
+        attribution(NEXT_TOKEN_FLAG);
+    }
+
+    public void attribution(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION)
+            exceptionHandler.throwArithmeticOperatorExpectedException('=', token);
     }
 
     public void semicolon() {
@@ -45,8 +65,8 @@ public class ParserValidation {
     }
 
     public void semicolon(boolean nextToken) {
-        verifyToken(nextToken);
-        if (token.getType() != TokenType.SPECIAL_CHARACTER_SEMICOLON)
+        tokenType(nextToken);
+        if (tokenType != TokenType.SPECIAL_CHARACTER_SEMICOLON)
             exceptionHandler.throwSpecialCharacterExpectedException(';', token);
     }
 
@@ -55,8 +75,8 @@ public class ParserValidation {
     }
 
     public void openParentesis(boolean nextToken) {
-        verifyToken(nextToken);
-        if (token.getType() != TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS)
+        tokenType(nextToken);
+        if (tokenType != TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS)
             exceptionHandler.throwSpecialCharacterExpectedException('(', token);
     }
 
@@ -65,8 +85,8 @@ public class ParserValidation {
     }
 
     public void closeParentesis(boolean nextToken) {
-        verifyToken(nextToken);
-        if (token.getType() != TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS)
+        tokenType(nextToken);
+        if (tokenType != TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS)
             exceptionHandler.throwSpecialCharacterExpectedException(')', token);
     }
 
@@ -75,8 +95,8 @@ public class ParserValidation {
     }
 
     public void openCurlyBracket(boolean nextToken) {
-        verifyToken(nextToken);
-        if (token.getType() != TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET)
+        tokenType(nextToken);
+        if (tokenType != TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET)
             exceptionHandler.throwSpecialCharacterExpectedException('{', token);
     }
 
@@ -85,20 +105,65 @@ public class ParserValidation {
     }
 
     public void closeCurlyBracket(boolean nextToken) {
-        verifyToken(nextToken);
-        if (token.getType() != TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET)
+        tokenType(nextToken);
+        if (tokenType != TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET)
             exceptionHandler.throwSpecialCharacterExpectedException('}', token);
     }
+
+    public void relationalOperator() {
+        relationalOperator(NEXT_TOKEN_FLAG);
+    }
+
+    public void relationalOperator(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.RELATIONAL_OPERATOR_EQUAL && tokenType != TokenType.RELATIONAL_OPERATOR_DIFFERENT
+                && tokenType != TokenType.RELATIONAL_OPERATOR_LESS_THAN && tokenType != TokenType.RELATIONAL_OPERATOR_GREATER_THAN
+                && tokenType != TokenType.RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO && tokenType != TokenType.RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO)
+            exceptionHandler.throwRelationalOperatorExpectedException(new String[]{"==", "!=", "<", ">", "<=", ">="}, token);
+    }
+
+    // ======= AUTOMÂTOS =======
 
     public void tipo() {
         tipo(NEXT_TOKEN_FLAG);
     }
 
     public void tipo(boolean nextToken) {
-        verifyToken(nextToken);
-        if (token.getType() != TokenType.RESERVED_WORD_INT && token.getType() != TokenType.RESERVED_WORD_FLOAT
-                && token.getType() != TokenType.RESERVED_WORD_CHAR)
+        tokenType(nextToken);
+        if (tokenType != TokenType.RESERVED_WORD_INT && tokenType != TokenType.RESERVED_WORD_FLOAT
+                && tokenType != TokenType.RESERVED_WORD_CHAR)
             exceptionHandler.throwReservedWordExpectedException(new String[]{"int", "float", "char"}, token);
+    }
+
+    public void fator() {
+        fator(NEXT_TOKEN_FLAG);
+    }
+
+    public void fator(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.RESERVED_WORD_INT && tokenType != TokenType.RESERVED_WORD_FLOAT
+                && tokenType != TokenType.RESERVED_WORD_CHAR)
+            exceptionHandler.throwReservedWordExpectedException(new String[]{"int", "float", "char"}, token);
+    }
+
+    public void termoAux() {
+        termoAux(NEXT_TOKEN_FLAG);
+    }
+
+    public void termoAux(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.ARITHMETIC_OPERATOR_MULTIPLICATION && tokenType != TokenType.ARITHMETIC_OPERATOR_DIVISION)
+            exceptionHandler.throwArithmeticOperatorExpectedException(new char[]{'*', '/'}, token);
+    }
+
+    public void expressaoAritmeticaAux() {
+        expressaoAritmeticaAux(NEXT_TOKEN_FLAG);
+    }
+
+    public void expressaoAritmeticaAux(boolean nextToken) {
+        tokenType(nextToken);
+        if (tokenType != TokenType.ARITHMETIC_OPERATOR_SUM && tokenType != TokenType.ARITHMETIC_OPERATOR_SUBTRACTION)
+            exceptionHandler.throwArithmeticOperatorExpectedException(new char[]{'+', '-'}, token);
     }
 
     // ======= CONJUNTOS FIRST =======
@@ -115,11 +180,11 @@ public class ParserValidation {
                 || tokenType == TokenType.RESERVED_WORD_FOR || tokenType == TokenType.RESERVED_WORD_IF;
     }
 
-    public boolean conjFirstForDeclVar() {
-        return conjFirstForDeclVar(NEXT_TOKEN_FLAG);
+    public boolean conjFirstForDeclaracao() {
+        return conjFirstForDeclaracao(NEXT_TOKEN_FLAG);
     }
 
-    public boolean conjFirstForDeclVar(boolean nextToken) {
+    public boolean conjFirstForDeclaracao(boolean nextToken) {
         tokenType(nextToken);
         return tokenType == TokenType.RESERVED_WORD_INT || tokenType == TokenType.RESERVED_WORD_FLOAT
                 || tokenType == TokenType.RESERVED_WORD_CHAR;
@@ -153,25 +218,16 @@ public class ParserValidation {
         return tokenType == TokenType.RESERVED_WORD_IF;
     }
 
-    public boolean conjFirstForDeclVarAux() {
-        return conjFirstForDeclVarAux(NEXT_TOKEN_FLAG);
-    }
-
-    public boolean conjFirstForDeclVarAux(boolean nextToken) {
-        tokenType(nextToken);
-        return tokenType == TokenType.IDENTIFIER;
-    }
-
     // ======= HELPER METHODS =======
-
-    private void verifyToken(boolean nextToken) {
-        if (nextToken)
-            token = scanner.nextToken();
-    }
 
     public void tokenType(boolean nextToken) {
         verifyToken(nextToken);
         tokenType = token.getType();
+    }
+
+    private void verifyToken(boolean nextToken) {
+        if (nextToken)
+            token = scanner.nextToken();
     }
 
 }

@@ -6,8 +6,6 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 class ParserTest {
 
     Parser parser;
@@ -85,22 +83,6 @@ class ParserTest {
 
     // ===========================
 
-    // ========== DECL_VAR ==========
-
-    @ParameterizedTest
-    @DisplayName("Flow 'declVar' sem erros")
-    @ValueSource(strings = {"int a = 3;"})
-    void testDeclVar_Sucess(String input) {
-        // given
-        scanner = new Scanner(input, true);
-        parser = new Parser(scanner);
-
-        // when + then
-        Assertions.assertDoesNotThrow(() -> parser.declVar());
-    }
-
-    // ===========================
-
     // ========== TIPO ==========
 
     @ParameterizedTest
@@ -129,30 +111,74 @@ class ParserTest {
 
     // ===========================
 
-    // ========== DECL_VAR_AUX ==========
+    // ========== DECLARACAO ==========
 
     @ParameterizedTest
-    @DisplayName("Flow 'declVarAux' sem erros")
-    @ValueSource(strings = {"x  ", "num  ", "qtyApples  "})
-    void testDeclVarAux_Sucess(String input) {
+    @DisplayName("Flow 'declaracao' sem erros")
+    @ValueSource(strings = {"int a = 3;"})
+    void testDeclaracao_Sucess(String input) {
         // given
         scanner = new Scanner(input, true);
         parser = new Parser(scanner);
 
         // when + then
-        Assertions.assertDoesNotThrow(() -> parser.declVarAux());
+        Assertions.assertDoesNotThrow(() -> parser.declaracao());
+    }
+
+    // ===========================
+
+    // ========== DECLARACAO_AUX ==========
+
+    @ParameterizedTest
+    @DisplayName("Flow 'declaracaoAux' sem erros")
+    @ValueSource(strings = {"int   ", "float   ", "char   ", "x  ", "num  ", "qtyApples  "})
+    void testDeclaracaoAux_Sucess(String input) {
+        // given
+        scanner = new Scanner(input, true);
+        parser = new Parser(scanner);
+
+        // when + then
+        Assertions.assertDoesNotThrow(() -> parser.declaracaoAux());
     }
 
     @ParameterizedTest
-    @DisplayName("Flow 'declVarAux' com erros")
-    @ValueSource(strings = {"main  ", "if  ", "int  "})
-    void testDeclVarAux_Error(String input) {
+    @DisplayName("Flow 'declaracaoAux' com erros")
+    @ValueSource(strings = {"main  ", "=  ", "54  "})
+    void testDeclaracaoAux_Error(String input) {
         // given
         scanner = new Scanner(input, true);
         parser = new Parser(scanner);
 
         // when + then
-        Assertions.assertThrows(TokenExpectedException.class, () -> parser.declVarAux());
+        Assertions.assertThrows(TokenExpectedException.class, () -> parser.declaracaoAux());
+    }
+
+    // ===========================
+
+    // ========== ATRIBUIÇÃO ==========
+
+    @ParameterizedTest
+    @DisplayName("Flow 'atribuição' sem erros")
+    @ValueSource(strings = {"=   ", ";   "})
+    void testAtribuicao_Sucess(String input) {
+        // given
+        scanner = new Scanner(input, true);
+        parser = new Parser(scanner);
+
+        // when + then
+        Assertions.assertDoesNotThrow(() -> parser.atribuicao());
+    }
+
+    @ParameterizedTest
+    @DisplayName("Flow 'atribuição' com erros")
+    @ValueSource(strings = {"main  ", "a  ", "54  "})
+    void testAtribuicao_Error(String input) {
+        // given
+        scanner = new Scanner(input, true);
+        parser = new Parser(scanner);
+
+        // when + then
+        Assertions.assertThrows(TokenExpectedException.class, () -> parser.atribuicao());
     }
 
     // ===========================
