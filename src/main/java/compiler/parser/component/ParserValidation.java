@@ -4,6 +4,7 @@ import compiler.component.ExceptionHandler;
 import compiler.interfaces.Validation;
 import compiler.model.Token;
 import compiler.model.TokenType;
+import compiler.model.Type;
 import compiler.scanner.Scanner;
 
 public class ParserValidation implements Validation {
@@ -14,7 +15,8 @@ public class ParserValidation implements Validation {
     private final Scanner scanner;                          // Análisador léxico
 
     private Token token;                                    // Token atual
-    private TokenType tokenType;                            // Tipo do token atual. Atualizado pontualmente.
+    private TokenType tokenType;
+    private Type type;
 
 
     public ParserValidation(Scanner scanner) {
@@ -177,9 +179,7 @@ public class ParserValidation implements Validation {
 
     public void relationalOperator(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.EQUAL && tokenType != TokenType.DIFFERENT
-                && tokenType != TokenType.LESS_THAN && tokenType != TokenType.GREATER_THAN
-                && tokenType != TokenType.LESS_THAN_OR_EQUAL_TO && tokenType != TokenType.GREATER_THAN_OR_EQUAL_TO)
+        if (type != Type.RELATIONAL_OPERATOR)
             exceptionHandler.throwRelationalOperatorExpectedException(new String[]{"==", "!=", "<", ">", "<=", ">="}, token);
     }
 
@@ -189,9 +189,7 @@ public class ParserValidation implements Validation {
 
     public void arithmeticOperator(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.PLUS && tokenType != TokenType.MINUS
-                && tokenType != TokenType.MULTIPLICATION && tokenType != TokenType.DIVISION
-                && tokenType != TokenType.ATTRIBUTION)
+        if (type != Type.ARITHMETIC_OPERATOR)
             exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"+", "-", "*", "/", "="}, token);
     }
 
@@ -213,7 +211,7 @@ public class ParserValidation implements Validation {
 
     public void tipo(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.INT && tokenType != TokenType.FLOAT  && tokenType != TokenType.CHAR)
+        if (tokenType != TokenType.INT && tokenType != TokenType.FLOAT && tokenType != TokenType.CHAR)
             exceptionHandler.throwReservedWordExpectedException(new String[]{"int", "float", "char"}, token);
     }
 
@@ -349,11 +347,17 @@ public class ParserValidation implements Validation {
     // ======= HELPER METHODS =======
 
     public void tokenType(boolean nextToken) {
-        verifyToken(nextToken);
+        getToken(nextToken);
         tokenType = token.getTokenType();
     }
 
-    private void verifyToken(boolean nextToken) {
+    public void updateToken(boolean nextToken) {
+        getToken(nextToken);
+        type = token.getType();
+        tokenType = token.getTokenType();
+    }
+
+    private void getToken(boolean nextToken) {
         if (nextToken)
             token = scanner.nextToken();
     }
