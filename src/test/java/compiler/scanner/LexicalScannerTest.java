@@ -19,7 +19,7 @@ public class LexicalScannerTest {
 //            token = lexicalScanner.automaton(c);
 //        }
 //
-//        assertEquals(TokenType.INTEGER_NUMBER, token.getType());
+//        assertEquals(TokenType.INTEGER_NUMBER, token.getTokenType());
 //        assertEquals(num.trim(), token.getText());
 //    }
 //
@@ -41,7 +41,7 @@ public class LexicalScannerTest {
 //            token = lexicalScanner.automaton(c);
 //        }
 //
-//        assertEquals(TokenType.REAL_NUMBER, token.getType());
+//        assertEquals(TokenType.REAL_NUMBER, token.getTokenType());
 //        assertEquals(num.trim(), token.getText());
 //    }
 //
@@ -63,7 +63,7 @@ public class LexicalScannerTest {
 //            token = lexicalScanner.automaton(c);
 //        }
 //
-//        assertEquals(TokenType.IDENTIFIER, token.getType());
+//        assertEquals(TokenType.IDENTIFIER, token.getTokenType());
 //        assertEquals(identifier.trim(), token.getText());
 //    }
 //
@@ -88,7 +88,7 @@ public class LexicalScannerTest {
 //            token = lexicalScanner.automaton(c);
 //        }
 //
-//        assertEquals(TokenType.RESERVED_WORD, token.getType());
+//        assertEquals(TokenType.RESERVED_WORD, token.getTokenType());
 //        assertEquals(reservedWord.trim(), token.getText());
 //    }
 //
@@ -100,7 +100,7 @@ public class LexicalScannerTest {
 //            token = lexicalScanner.automaton(c);
 //        }
 //
-//        assertEquals(TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION, token.getType());
+//        assertEquals(TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION, token.getTokenType());
 //        assertEquals(operator.trim(), token.getText());
 //    }
 //
@@ -111,7 +111,7 @@ public class LexicalScannerTest {
 //    void testTokenIsAnEqualsOperator() {
 //        lexicalScanner = new Scanner(PATH + "equals_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.RELATIONAL_OPERATOR_EQUAL, token.getType());
+//        assertEquals(TokenType.RELATIONAL_OPERATOR_EQUAL, token.getTokenType());
 //    }
 //
 ////    @ParameterizedTest
@@ -122,7 +122,7 @@ public class LexicalScannerTest {
 ////            token = lexicalScanner.automaton(c);
 ////        }
 ////
-////        assertEquals(TokenType.ARITHMETIC_OPERATOR_SUBTRACTION, token.getType());
+////        assertEquals(TokenType.ARITHMETIC_OPERATOR_SUBTRACTION, token.getTokenType());
 ////        assertEquals(operator.trim(), token.getText());
 ////    }
 //
@@ -130,104 +130,104 @@ public class LexicalScannerTest {
 //    void testTokenIsMinusOperator() {
 //        lexicalScanner = new Scanner(PATH + "minus_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.ARITHMETIC_OPERATOR_SUBTRACTION, token.getType());
+//        assertEquals(TokenType.ARITHMETIC_OPERATOR_SUBTRACTION, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsPlusOperator() {
 //        lexicalScanner = new Scanner(PATH + "plus_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.ARITHMETIC_OPERATOR_SUM, token.getType());
+//        assertEquals(TokenType.ARITHMETIC_OPERATOR_SUM, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsMultOperator() {
 //        lexicalScanner = new Scanner(PATH + "multiplication_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.ARITHMETIC_OPERATOR_MULTIPLICATION, token.getType());
+//        assertEquals(TokenType.ARITHMETIC_OPERATOR_MULTIPLICATION, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsDivOperator() {
 //        lexicalScanner = new Scanner(PATH + "division_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.ARITHMETIC_OPERATOR_DIVISION, token.getType());
+//        assertEquals(TokenType.ARITHMETIC_OPERATOR_DIVISION, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsComma() {
 //        lexicalScanner = new Scanner(PATH + "comma_character.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.SPECIAL_CHARACTER_COMMA, token.getType());
+//        assertEquals(TokenType.SPECIAL_CHARACTER_COMMA, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsSemiColon() {
 //        lexicalScanner = new Scanner(PATH + "semicolon_character.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.SPECIAL_CHARACTER_SEMICOLON, token.getType());
+//        assertEquals(TokenType.SPECIAL_CHARACTER_SEMICOLON, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsOpenParentesis() {
 //        lexicalScanner = new Scanner(PATH + "open_parentesis_character.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS, token.getType());
+//        assertEquals(TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsCloseParentesis() {
 //        lexicalScanner = new Scanner(PATH + "close_parentesis_character.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS, token.getType());
+//        assertEquals(TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsOpenCurlyBracketCharacter() {
 //        lexicalScanner = new Scanner(PATH + "open_curly_bracket_character.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET, token.getType());
+//        assertEquals(TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsCloseCurlyBracketCharacter() {
 //        lexicalScanner = new Scanner(PATH + "close_curly_bracket_character.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET, token.getType());
+//        assertEquals(TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsALessThanOperator() {
 //        lexicalScanner = new Scanner(PATH + "less_than_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.RELATIONAL_OPERATOR_LESS_THAN, token.getType());
+//        assertEquals(TokenType.RELATIONAL_OPERATOR_LESS_THAN, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsALessThanOrEqualToOperator() {
 //        lexicalScanner = new Scanner(PATH + "less_than_or_equal_to_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO, token.getType());
+//        assertEquals(TokenType.RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsAGreaterThanOperator() {
 //        lexicalScanner = new Scanner(PATH + "greater_than_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.RELATIONAL_OPERATOR_GREATER_THAN, token.getType());
+//        assertEquals(TokenType.RELATIONAL_OPERATOR_GREATER_THAN, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsAGreaterThanOrEqualToOperator() {
 //        lexicalScanner = new Scanner(PATH + "greater_than_or_equal_to_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO, token.getType());
+//        assertEquals(TokenType.RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO, token.getTokenType());
 //    }
 //
 //    @Test
 //    void testTokenIsADifferentOperator() {
 //        lexicalScanner = new Scanner(PATH + "different_operator.txt");
 //        Token token = lexicalScanner.nextToken();
-//        assertEquals(TokenType.RELATIONAL_OPERATOR_DIFFERENT, token.getType());
+//        assertEquals(TokenType.RELATIONAL_OPERATOR_DIFFERENT, token.getTokenType());
 //    }
 }

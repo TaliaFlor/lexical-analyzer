@@ -11,13 +11,11 @@ public class Compiler {
 
     public static void main(String[] args) {
         try {
-//            Scanner scanner = new Scanner("src/main/resources/examples/somatorio.c");
-            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
+            Scanner scanner = new Scanner("src/main/resources/examples/somatorio.c");
+//            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_testes.c");
 
             log.info("Start of reading");
-//            Parser parser = new Parser(scanner);
-//            parser.start();
 
             Token token;
             do {

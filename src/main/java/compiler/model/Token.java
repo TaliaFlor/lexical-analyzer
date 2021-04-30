@@ -8,7 +8,9 @@ import lombok.*;
 @RequiredArgsConstructor
 public class Token {
     @NonNull
-    private TokenType type;
+    private Type type;
+    @NonNull
+    private TokenType tokenType;
     @NonNull
     private String text;
     private int line;
@@ -16,7 +18,7 @@ public class Token {
 
     @Override
     public String toString() {
-        return type + " -> " + text;
+        return type + " [" + tokenType + "] -> " + text;
     }
 
 

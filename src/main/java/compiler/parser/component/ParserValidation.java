@@ -1,11 +1,12 @@
 package compiler.parser.component;
 
 import compiler.component.ExceptionHandler;
+import compiler.interfaces.Validation;
 import compiler.model.Token;
 import compiler.model.TokenType;
 import compiler.scanner.Scanner;
 
-public class ParserValidation {
+public class ParserValidation implements Validation {
 
     private static final boolean NEXT_TOKEN_FLAG = true;
 
@@ -26,7 +27,7 @@ public class ParserValidation {
 
     public void main() {
         token = scanner.nextToken();
-        if (token.getType() != TokenType.RESERVED_WORD_MAIN)
+        if (token.getTokenType() != TokenType.MAIN)
             exceptionHandler.throwReservedWordExpectedException("main", token);
     }
 
@@ -46,7 +47,7 @@ public class ParserValidation {
 
     public void _while(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.RESERVED_WORD_WHILE)
+        if (tokenType != TokenType.WHILE)
             exceptionHandler.throwReservedWordExpectedException("while", token);
     }
 
@@ -56,7 +57,7 @@ public class ParserValidation {
 
     public void _do(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.RESERVED_WORD_DO)
+        if (tokenType != TokenType.DO)
             exceptionHandler.throwReservedWordExpectedException("do", token);
     }
 
@@ -66,7 +67,7 @@ public class ParserValidation {
 
     public void _for(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.RESERVED_WORD_FOR)
+        if (tokenType != TokenType.FOR)
             exceptionHandler.throwReservedWordExpectedException("for", token);
     }
 
@@ -76,7 +77,7 @@ public class ParserValidation {
 
     public void _if(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.RESERVED_WORD_IF)
+        if (tokenType != TokenType.IF)
             exceptionHandler.throwReservedWordExpectedException("if", token);
     }
 
@@ -86,7 +87,7 @@ public class ParserValidation {
 
     public void _else(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.RESERVED_WORD_ELSE)
+        if (tokenType != TokenType.ELSE)
             exceptionHandler.throwReservedWordExpectedException("else", token);
     }
 
@@ -96,7 +97,7 @@ public class ParserValidation {
 
     public void equals(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.RELATIONAL_OPERATOR_EQUAL)
+        if (tokenType != TokenType.EQUAL)
             exceptionHandler.throwRelationalOperatorExpectedException("==", token);
     }
 
@@ -106,7 +107,7 @@ public class ParserValidation {
 
     public void attribution(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION)
+        if (tokenType != TokenType.ATTRIBUTION)
             exceptionHandler.throwArithmeticOperatorExpectedException('=', token);
     }
 
@@ -116,7 +117,7 @@ public class ParserValidation {
 
     public void semicolon(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.SPECIAL_CHARACTER_SEMICOLON)
+        if (tokenType != TokenType.SEMICOLON)
             exceptionHandler.throwSpecialCharacterExpectedException(';', token);
     }
 
@@ -126,7 +127,7 @@ public class ParserValidation {
 
     public void openParentesis(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS)
+        if (tokenType != TokenType.OPEN_PARENTHESIS)
             exceptionHandler.throwSpecialCharacterExpectedException('(', token);
     }
 
@@ -136,7 +137,7 @@ public class ParserValidation {
 
     public void closeParentesis(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS)
+        if (tokenType != TokenType.CLOSE_PARENTHESIS)
             exceptionHandler.throwSpecialCharacterExpectedException(')', token);
     }
 
@@ -146,7 +147,7 @@ public class ParserValidation {
 
     public void openCurlyBracket(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET)
+        if (tokenType != TokenType.OPEN_CURLY_BRACKET)
             exceptionHandler.throwSpecialCharacterExpectedException('{', token);
     }
 
@@ -156,7 +157,7 @@ public class ParserValidation {
 
     public void closeCurlyBracket(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET)
+        if (tokenType != TokenType.CLOSE_CURLY_BRACKET)
             exceptionHandler.throwSpecialCharacterExpectedException('}', token);
     }
 
@@ -176,9 +177,9 @@ public class ParserValidation {
 
     public void relationalOperator(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.RELATIONAL_OPERATOR_EQUAL && tokenType != TokenType.RELATIONAL_OPERATOR_DIFFERENT
-                && tokenType != TokenType.RELATIONAL_OPERATOR_LESS_THAN && tokenType != TokenType.RELATIONAL_OPERATOR_GREATER_THAN
-                && tokenType != TokenType.RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO && tokenType != TokenType.RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO)
+        if (tokenType != TokenType.EQUAL && tokenType != TokenType.DIFFERENT
+                && tokenType != TokenType.LESS_THAN && tokenType != TokenType.GREATER_THAN
+                && tokenType != TokenType.LESS_THAN_OR_EQUAL_TO && tokenType != TokenType.GREATER_THAN_OR_EQUAL_TO)
             exceptionHandler.throwRelationalOperatorExpectedException(new String[]{"==", "!=", "<", ">", "<=", ">="}, token);
     }
 
@@ -188,9 +189,9 @@ public class ParserValidation {
 
     public void arithmeticOperator(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.ARITHMETIC_OPERATOR_SUM && tokenType != TokenType.ARITHMETIC_OPERATOR_SUBTRACTION
-                && tokenType != TokenType.ARITHMETIC_OPERATOR_MULTIPLICATION && tokenType != TokenType.ARITHMETIC_OPERATOR_DIVISION
-                && tokenType != TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION)
+        if (tokenType != TokenType.PLUS && tokenType != TokenType.MINUS
+                && tokenType != TokenType.MULTIPLICATION && tokenType != TokenType.DIVISION
+                && tokenType != TokenType.ATTRIBUTION)
             exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"+", "-", "*", "/", "="}, token);
     }
 
@@ -200,7 +201,7 @@ public class ParserValidation {
 
     public void sumOrMinus(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.ARITHMETIC_OPERATOR_SUM && tokenType != TokenType.ARITHMETIC_OPERATOR_SUBTRACTION)
+        if (tokenType != TokenType.PLUS && tokenType != TokenType.MINUS)
             exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"+", "-"}, token);
     }
 
@@ -212,20 +213,18 @@ public class ParserValidation {
 
     public void tipo(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.RESERVED_WORD_INT && tokenType != TokenType.RESERVED_WORD_FLOAT
-                && tokenType != TokenType.RESERVED_WORD_CHAR)
+        if (tokenType != TokenType.INT && tokenType != TokenType.FLOAT  && tokenType != TokenType.CHAR)
             exceptionHandler.throwReservedWordExpectedException(new String[]{"int", "float", "char"}, token);
     }
 
-    public void fator() {
-        fator(NEXT_TOKEN_FLAG);
+    public void variableValues() {
+        variableValues(NEXT_TOKEN_FLAG);
     }
 
-    public void fator(boolean nextToken) {
+    public void variableValues(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.RESERVED_WORD_INT && tokenType != TokenType.RESERVED_WORD_FLOAT
-                && tokenType != TokenType.RESERVED_WORD_CHAR)
-            exceptionHandler.throwReservedWordExpectedException(new String[]{"int", "float", "char"}, token);
+        if (tokenType != TokenType.CHARACTERE && tokenType != TokenType.REAL_NUMBER && tokenType != TokenType.INTEGER_NUMBER)
+            exceptionHandler.throwVariableValueExpectedException(new String[]{"char", "int", "float"}, token);
     }
 
     public void termoAux() {
@@ -234,7 +233,7 @@ public class ParserValidation {
 
     public void termoAux(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.ARITHMETIC_OPERATOR_MULTIPLICATION && tokenType != TokenType.ARITHMETIC_OPERATOR_DIVISION)
+        if (tokenType != TokenType.MULTIPLICATION && tokenType != TokenType.DIVISION)
             exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"*", "/"}, token);
     }
 
@@ -244,7 +243,7 @@ public class ParserValidation {
 
     public void expressaoAritmeticaAux(boolean nextToken) {
         tokenType(nextToken);
-        if (tokenType != TokenType.ARITHMETIC_OPERATOR_SUM && tokenType != TokenType.ARITHMETIC_OPERATOR_SUBTRACTION)
+        if (tokenType != TokenType.PLUS && tokenType != TokenType.MINUS)
             exceptionHandler.throwArithmeticOperatorExpectedException(new String[]{"+", "-"}, token);
     }
 
@@ -256,7 +255,7 @@ public class ParserValidation {
 
     public boolean isWhile(boolean nextToken) {
         tokenType(nextToken);
-        return tokenType == TokenType.RESERVED_WORD_WHILE;
+        return tokenType == TokenType.WHILE;
     }
 
     public boolean isDo() {
@@ -265,7 +264,7 @@ public class ParserValidation {
 
     public boolean isDo(boolean nextToken) {
         tokenType(nextToken);
-        return tokenType == TokenType.RESERVED_WORD_DO;
+        return tokenType == TokenType.DO;
     }
 
     public boolean isFor() {
@@ -274,7 +273,7 @@ public class ParserValidation {
 
     public boolean isFor(boolean nextToken) {
         tokenType(nextToken);
-        return tokenType == TokenType.RESERVED_WORD_FOR;
+        return tokenType == TokenType.FOR;
     }
 
     public boolean isSumOrMinus() {
@@ -283,7 +282,7 @@ public class ParserValidation {
 
     public boolean isSumOrMinus(boolean nextToken) {
         tokenType(nextToken);
-        return tokenType == TokenType.ARITHMETIC_OPERATOR_SUM || tokenType == TokenType.ARITHMETIC_OPERATOR_SUBTRACTION;
+        return tokenType == TokenType.PLUS || tokenType == TokenType.MINUS;
     }
 
     public boolean isAttribution() {
@@ -292,7 +291,7 @@ public class ParserValidation {
 
     public boolean isAttribution(boolean nextToken) {
         tokenType(nextToken);
-        return tokenType == TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION;
+        return tokenType == TokenType.ATTRIBUTION;
     }
 
     // ======= CONJUNTOS FIRST =======
@@ -303,10 +302,10 @@ public class ParserValidation {
 
     public boolean conjFirstForComando(boolean nextToken) {
         tokenType(nextToken);
-        return tokenType == TokenType.IDENTIFIER || tokenType == TokenType.RESERVED_WORD_INT ||
-                tokenType == TokenType.RESERVED_WORD_FLOAT || tokenType == TokenType.RESERVED_WORD_CHAR
-                || tokenType == TokenType.RESERVED_WORD_WHILE || tokenType == TokenType.RESERVED_WORD_DO
-                || tokenType == TokenType.RESERVED_WORD_FOR || tokenType == TokenType.RESERVED_WORD_IF;
+        return tokenType == TokenType.IDENTIFIER || tokenType == TokenType.INT ||
+                tokenType == TokenType.FLOAT || tokenType == TokenType.CHAR
+                || tokenType == TokenType.WHILE || tokenType == TokenType.DO
+                || tokenType == TokenType.FOR || tokenType == TokenType.IF;
     }
 
     public boolean conjFirstForDeclaracao() {
@@ -315,8 +314,8 @@ public class ParserValidation {
 
     public boolean conjFirstForDeclaracao(boolean nextToken) {
         tokenType(nextToken);
-        return tokenType == TokenType.RESERVED_WORD_INT || tokenType == TokenType.RESERVED_WORD_FLOAT
-                || tokenType == TokenType.RESERVED_WORD_CHAR;
+        return tokenType == TokenType.INT || tokenType == TokenType.FLOAT
+                || tokenType == TokenType.CHAR;
     }
 
     public boolean conjFirstForAtribuicao() {
@@ -334,8 +333,8 @@ public class ParserValidation {
 
     public boolean conjFirstForIteracao(boolean nextToken) {
         tokenType(nextToken);
-        return tokenType == TokenType.RESERVED_WORD_WHILE || tokenType == TokenType.RESERVED_WORD_DO
-                || tokenType == TokenType.RESERVED_WORD_FOR;
+        return tokenType == TokenType.WHILE || tokenType == TokenType.DO
+                || tokenType == TokenType.FOR;
     }
 
     public boolean conjFirstForDecisao() {
@@ -344,14 +343,14 @@ public class ParserValidation {
 
     public boolean conjFirstForDecisao(boolean nextToken) {
         tokenType(nextToken);
-        return tokenType == TokenType.RESERVED_WORD_IF;
+        return tokenType == TokenType.IF;
     }
 
     // ======= HELPER METHODS =======
 
     public void tokenType(boolean nextToken) {
         verifyToken(nextToken);
-        tokenType = token.getType();
+        tokenType = token.getTokenType();
     }
 
     private void verifyToken(boolean nextToken) {

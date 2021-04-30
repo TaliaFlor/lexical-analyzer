@@ -3,6 +3,7 @@ package compiler.scanner;
 import compiler.exception.LexicalException;
 import compiler.model.Token;
 import compiler.model.TokenType;
+import compiler.model.Type;
 import compiler.scanner.exception.MalformedTokenException;
 import compiler.scanner.exception.UnrecognizedTokenException;
 import compiler.scanner.model.State;
@@ -88,7 +89,8 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
     }
 
     private void append(char currentChar) {
-        scanned += currentChar;
+        if (currentChar != '\0')
+            scanned += currentChar;
     }
 
     private void setState(State state) {
@@ -151,7 +153,7 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
                 stateOne(c);
                 break;
             case TWO:
-                return returnToken(TokenType.INTEGER_NUMBER, c);
+                return returnToken(Type.VARIABLE_VALUE, TokenType.INTEGER_NUMBER, c);
             case THREE:
                 stateThree(c);
                 break;
@@ -159,7 +161,7 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
                 stateFour(c);
                 break;
             case FIVE:
-                return returnToken(TokenType.REAL_NUMBER, c);
+                return returnToken(Type.VARIABLE_VALUE, TokenType.REAL_NUMBER, c);
             case SIX:
                 stateSix(c);
                 break;
@@ -169,9 +171,9 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
                 stateEight(c);
                 break;
             case NINE:
-                return returnToken(TokenType.ARITHMETIC_OPERATOR_ATTRIBUTION, c);
+                return returnToken(Type.ARITHMETIC_OPERATOR, TokenType.ATTRIBUTION, c);
             case TEN:
-                return returnToken(TokenType.RELATIONAL_OPERATOR_EQUAL, c);
+                return returnToken(Type.RELATIONAL_OPERATOR, TokenType.EQUAL, c);
             case ELEVEN:
                 return stateEleven(c);
             case TWELVE:
@@ -183,21 +185,21 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
                 stateFourteen();
                 break;
             case FIFTHTEEN:
-                return returnToken(TokenType.RELATIONAL_OPERATOR_LESS_THAN_OR_EQUAL_TO, c);
+                return returnToken(Type.RELATIONAL_OPERATOR, TokenType.LESS_THAN_OR_EQUAL_TO, c);
             case SIXTEEN:
-                return returnToken(TokenType.RELATIONAL_OPERATOR_LESS_THAN, c);
+                return returnToken(Type.RELATIONAL_OPERATOR, TokenType.LESS_THAN, c);
             case SEVENTEEN:
                 stateSeventeen();
                 break;
             case EIGHTEEN:
-                return returnToken(TokenType.RELATIONAL_OPERATOR_GREATER_THAN_OR_EQUAL_TO, c);
+                return returnToken(Type.RELATIONAL_OPERATOR, TokenType.GREATER_THAN_OR_EQUAL_TO, c);
             case NINETEEN:
-                return returnToken(TokenType.RELATIONAL_OPERATOR_GREATER_THAN, c);
+                return returnToken(Type.RELATIONAL_OPERATOR, TokenType.GREATER_THAN, c);
             case TWENTY:
                 stateTwenty(c);
                 break;
             case TWENTY_ONE:
-                return returnToken(TokenType.RELATIONAL_OPERATOR_DIFFERENT, c);
+                return returnToken(Type.RELATIONAL_OPERATOR, TokenType.DIFFERENT, c);
             case TWENTY_TWO:
                 stateTwentyTwo(c);
                 break;
@@ -205,7 +207,7 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
                 stateTwentyThree(c);
                 break;
             case TWENTY_FOUR:
-                return returnToken(TokenType.CHAR);
+                return returnToken(Type.VARIABLE_VALUE, TokenType.CHARACTERE);
             default:
                 throw new LexicalException("Estado inválido: " + state + ". Na linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
         }
@@ -258,31 +260,31 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
 
     private Token stateSeven() {
         if (isReservedWord(scanned))
-            return returnToken(reservedWordType());
+            return returnToken(Type.RESERVED_WORD, reservedWordType());
         else
-            return returnToken(TokenType.IDENTIFIER);
+            return returnToken(Type.IDENTIFIER, TokenType.IDENTIFIER);
     }
 
     private TokenType reservedWordType() {
         switch (scanned.trim()) {
             case "int":
-                return TokenType.RESERVED_WORD_INT;
+                return TokenType.INT;
             case "float":
-                return TokenType.RESERVED_WORD_FLOAT;
+                return TokenType.FLOAT;
             case "char":
-                return TokenType.RESERVED_WORD_CHAR;
+                return TokenType.CHAR;
             case "main":
-                return TokenType.RESERVED_WORD_MAIN;
+                return TokenType.MAIN;
             case "if":
-                return TokenType.RESERVED_WORD_IF;
+                return TokenType.IF;
             case "else":
-                return TokenType.RESERVED_WORD_ELSE;
+                return TokenType.ELSE;
             case "while":
-                return TokenType.RESERVED_WORD_WHILE;
+                return TokenType.WHILE;
             case "do":
-                return TokenType.RESERVED_WORD_DO;
+                return TokenType.DO;
             case "for":
-                return TokenType.RESERVED_WORD_FOR;
+                return TokenType.FOR;
             default:
                 throw new IllegalStateException("Palavra reservada inválida: " + scanned);
         }
@@ -297,45 +299,45 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
     }
 
     private Token stateEleven(char c) {
-        TokenType type;
+        TokenType tokenType;
         if (isNonConsumable(c) || isChar(c) || isUnderline(c) || isOpenParentesis(c))   //TODO adicionar o check para char aqui
             c = previousChar();
 
         if (isMinus(c))
-            type = TokenType.ARITHMETIC_OPERATOR_SUBTRACTION;
+            tokenType = TokenType.MINUS;
         else if (isPlus(c))
-            type = TokenType.ARITHMETIC_OPERATOR_SUM;
+            tokenType = TokenType.PLUS;
         else if (isMult(c))
-            type = TokenType.ARITHMETIC_OPERATOR_MULTIPLICATION;
+            tokenType = TokenType.MULTIPLICATION;
         else if (isDiv(c))
-            type = TokenType.ARITHMETIC_OPERATOR_DIVISION;
+            tokenType = TokenType.DIVISION;
         else
             throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
 
         next();
         next();
-        return returnToken(type, c);
+        return returnToken(Type.ARITHMETIC_OPERATOR, tokenType, c);
     }
 
     private Token stateTwelve(char c) {
-        TokenType type;
+        TokenType tokenType;
         if (isComma(c))
-            type = TokenType.SPECIAL_CHARACTER_COMMA;
+            tokenType = TokenType.COMMA;
         else if (isSemicolon(c))
-            type = TokenType.SPECIAL_CHARACTER_SEMICOLON;
+            tokenType = TokenType.SEMICOLON;
         else if (isOpenParentesis(c))
-            type = TokenType.SPECIAL_CHARACTER_OPEN_PARENTHESIS;
+            tokenType = TokenType.OPEN_PARENTHESIS;
         else if (isCloseParentesis(c))
-            type = TokenType.SPECIAL_CHARACTER_CLOSE_PARENTHESIS;
+            tokenType = TokenType.CLOSE_PARENTHESIS;
         else if (isOpenCurlyBracket(c))
-            type = TokenType.SPECIAL_CHARACTER_OPEN_CURLY_BRACKET;
+            tokenType = TokenType.OPEN_CURLY_BRACKET;
         else if (isCloseCurlyBracket(c))
-            type = TokenType.SPECIAL_CHARACTER_CLOSE_CURLY_BRACKET;
+            tokenType = TokenType.CLOSE_CURLY_BRACKET;
         else
             throw new UnrecognizedTokenException("Unrecognized token - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
 
         next();
-        return returnToken(type, c);
+        return returnToken(Type.SPECIAL_CHARACTER, tokenType, c);
     }
 
     private void stateThirteen(char c) {
@@ -400,19 +402,16 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
         throw new MalformedTokenException("Malformed number - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
     }
 
-    private Token returnToken(TokenType type) {
-        String text = scanned.trim();
-        back();
-        resetState();
-        return new Token(type, text, line, (column - text.length()));
+    private Token returnToken(Type type, TokenType tokenType) {
+        return returnToken(type, tokenType, '\0');
     }
 
-    private Token returnToken(TokenType type, char c) {
+    private Token returnToken(Type type, TokenType tokenType, char c) {
         String text = scanned.trim();
         back();
         append(c);
         resetState();
-        return new Token(type, text, line, (column - text.length()));
+        return new Token(type, tokenType, text, line, (column - text.length()));
     }
 
     private void resetState() {

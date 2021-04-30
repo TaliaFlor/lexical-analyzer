@@ -100,7 +100,7 @@ public class Parser {
 
     public void fator(boolean nextToken) {
         try {
-            tipo(nextToken);
+            validate.variableValues(nextToken);
         } catch (TokenExpectedException e) {
             validate.identifier(NEXT_TOKEN_FLAG_FALSE);
         }

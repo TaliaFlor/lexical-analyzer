@@ -1,7 +1,5 @@
 package compiler.scanner.util;
 
-import compiler.model.Token;
-import compiler.model.TokenType;
 import compiler.scanner.exception.MalformedTokenException;
 import compiler.scanner.model.State;
 
@@ -75,21 +73,6 @@ public class ScannerUtil {
 
     private void throwMalformedNumberException(char c) {
         throw new MalformedTokenException("Malformed number - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
-    }
-
-    private Token returnToken(TokenType type) {
-        String text = scanned.trim();
-        back();
-        resetState();
-        return new Token(type, text, line, (column - text.length()));
-    }
-
-    private Token returnToken(TokenType type, char c) {
-        String text = scanned.trim();
-        back();
-        append(c);
-        resetState();
-        return new Token(type, text, line, (column - text.length()));
     }
 
     private void resetState() {

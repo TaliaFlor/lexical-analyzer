@@ -1,0 +1,11 @@
+package compiler.model;
+
+public enum Type {
+    IDENTIFIER,
+    RESERVED_WORD,
+    VARIABLE_VALUE,
+    NON_CONSUMABLE,
+    SPECIAL_CHARACTER,
+    ARITHMETIC_OPERATOR,
+    RELATIONAL_OPERATOR
+}
