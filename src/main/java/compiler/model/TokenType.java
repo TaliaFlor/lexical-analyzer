@@ -61,6 +61,7 @@ public enum TokenType {
         this.type = type;
     }
 
+
     public String get() {
         return value;
     }

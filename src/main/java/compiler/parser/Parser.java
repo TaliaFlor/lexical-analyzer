@@ -85,11 +85,7 @@ public class Parser {
             try {
                 expressaoAritmetica(NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                try {
-                    expressaoRelacional(NEXT_TOKEN_FLAG_FALSE);
-                } catch (TokenExpectedException e2) {
-                    expressaoLogica(NEXT_TOKEN_FLAG_FALSE);
-                }
+                expressaoRelacional(NEXT_TOKEN_FLAG_FALSE);
             }
         }
     }
@@ -98,7 +94,7 @@ public class Parser {
         fator(NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void fator(boolean nextToken) {
+    public void fator(boolean nextToken) {  //TODO consertar try/catch pq ele só está lançando exceção com a informação do último item
         try {
             validate.variableValues(nextToken);
         } catch (TokenExpectedException e) {
@@ -182,13 +178,6 @@ public class Parser {
     private void expressaoRelacionalAux(boolean nextToken) {
         validate.relationalOperator(nextToken);
         fatorOuExpressaoAritmetica();
-    }
-
-    public void expressaoLogica() {
-        expressaoLogica(NEXT_TOKEN_FLAG_TRUE);
-    }
-
-    public void expressaoLogica(boolean nextToken) {    // TODO
     }
 
     public void iteracao() {
