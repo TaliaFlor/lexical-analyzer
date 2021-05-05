@@ -1,29 +1,91 @@
-package compiler.parser.component;
+package compiler.parser.validation;
 
 import compiler.component.ExceptionHandler;
+import compiler.component.ExceptionHandler2;
 import compiler.interfaces.Validation;
 import compiler.model.Token;
 import compiler.model.TokenType;
 import compiler.model.Type;
+import compiler.parser.model.ActualToken;
 import compiler.scanner.Scanner;
 
 public class ParserValidation implements Validation {
 
-    private static final boolean NEXT_TOKEN_FLAG = true;
+    private static final boolean NEXT_TOKEN_FLAG_TRUE = true;
 
     private final ExceptionHandler exceptionHandler;
+    protected final ExceptionHandler2 exceptionHandler2;
     private final Scanner scanner;                          // Análisador léxico
+    protected final ActualToken actualToken;
 
-    private Token token;                                    // Token atual
-    private TokenType tokenType;
-    private Type type;
+    protected Token token;                                    // Token atual
+    protected Type type;
+    protected TokenType tokenType;
 
 
     public ParserValidation(Scanner scanner) {
         this.scanner = scanner;
         exceptionHandler = new ExceptionHandler();
+        exceptionHandler2 = new ExceptionHandler2();
+        actualToken = ActualToken.getInstance();
     }
 
+
+    // ======= NOVOS =======
+
+    @Override
+    public void identifier(boolean nextToken) {
+        updateInfo(nextToken);
+        if (this.tokenType != TokenType.IDENTIFIER)
+            exceptionHandler2.throwIdentifierExpectedException();
+    }
+
+    @Override
+    public void reservedWord(TokenType tokenType, boolean nextToken) {
+        updateInfo(nextToken);
+        if (this.tokenType != tokenType)
+            exceptionHandler2.throwReservedWordExpectedException(tokenType);
+    }
+
+    public void variableValues(boolean nextToken) {
+        updateInfo(nextToken);
+        if (type != Type.VARIABLE_VALUE)
+            exceptionHandler2.throwVariableValueExpectedException();
+    }
+
+    @Override
+    public void variableValue(TokenType tokenType, boolean nextToken) {
+        updateInfo(nextToken);
+        if (this.tokenType != tokenType)
+            exceptionHandler2.throwVariableValueExpectedException(tokenType);
+    }
+
+    @Override
+    public void specialCharacter(TokenType tokenType, boolean nextToken) {
+        updateInfo(nextToken);
+        if (this.tokenType != tokenType)
+            exceptionHandler2.throwSpecialCharacterExpectedException(tokenType);
+    }
+
+    public void arithmeticOperators(boolean nextToken) {
+        updateInfo(nextToken);
+        if (type != Type.ARITHMETIC_OPERATOR)
+            exceptionHandler2.throwArithmeticOperatorExpectedException();
+    }
+
+    @Override
+    public void arithmeticOperator(TokenType tokenType, boolean nextToken) {
+        updateInfo(nextToken);
+        if (this.tokenType != tokenType)
+            exceptionHandler2.throwArithmeticOperatorExpectedException(tokenType);
+    }
+
+    @Override
+    public void relationalOperator(TokenType tokenType, boolean nextToken) {
+        updateInfo(nextToken);
+        if (this.tokenType != tokenType)
+            exceptionHandler2.throwRelationalOperatorExpectedException(tokenType);
+    }
 
     // ======= VALIDATIONS =======
 
@@ -33,18 +95,9 @@ public class ParserValidation implements Validation {
             exceptionHandler.throwReservedWordExpectedException("main", token);
     }
 
-    public void identifier() {
-        identifier(NEXT_TOKEN_FLAG);
-    }
-
-    public void identifier(boolean nextToken) {
-        tokenType(nextToken);
-        if (tokenType != TokenType.IDENTIFIER)
-            exceptionHandler.throwIdentifierExpectedException(token);
-    }
 
     public void _while() {
-        _while(NEXT_TOKEN_FLAG);
+        _while(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void _while(boolean nextToken) {
@@ -54,7 +107,7 @@ public class ParserValidation implements Validation {
     }
 
     public void _do() {
-        _do(NEXT_TOKEN_FLAG);
+        _do(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void _do(boolean nextToken) {
@@ -64,7 +117,7 @@ public class ParserValidation implements Validation {
     }
 
     public void _for() {
-        _for(NEXT_TOKEN_FLAG);
+        _for(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void _for(boolean nextToken) {
@@ -74,7 +127,7 @@ public class ParserValidation implements Validation {
     }
 
     public void _if() {
-        _if(NEXT_TOKEN_FLAG);
+        _if(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void _if(boolean nextToken) {
@@ -84,7 +137,7 @@ public class ParserValidation implements Validation {
     }
 
     public void _else() {
-        _else(NEXT_TOKEN_FLAG);
+        _else(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void _else(boolean nextToken) {
@@ -94,7 +147,7 @@ public class ParserValidation implements Validation {
     }
 
     public void equals() {
-        equals(NEXT_TOKEN_FLAG);
+        equals(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void equals(boolean nextToken) {
@@ -104,7 +157,7 @@ public class ParserValidation implements Validation {
     }
 
     public void attribution() {
-        attribution(NEXT_TOKEN_FLAG);
+        attribution(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void attribution(boolean nextToken) {
@@ -114,7 +167,7 @@ public class ParserValidation implements Validation {
     }
 
     public void semicolon() {
-        semicolon(NEXT_TOKEN_FLAG);
+        semicolon(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void semicolon(boolean nextToken) {
@@ -124,7 +177,7 @@ public class ParserValidation implements Validation {
     }
 
     public void openParentesis() {
-        openParentesis(NEXT_TOKEN_FLAG);
+        openParentesis(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void openParentesis(boolean nextToken) {
@@ -134,7 +187,7 @@ public class ParserValidation implements Validation {
     }
 
     public void closeParentesis() {
-        closeParentesis(NEXT_TOKEN_FLAG);
+        closeParentesis(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void closeParentesis(boolean nextToken) {
@@ -144,7 +197,7 @@ public class ParserValidation implements Validation {
     }
 
     public void openCurlyBracket() {
-        openCurlyBracket(NEXT_TOKEN_FLAG);
+        openCurlyBracket(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void openCurlyBracket(boolean nextToken) {
@@ -154,7 +207,7 @@ public class ParserValidation implements Validation {
     }
 
     public void closeCurlyBracket() {
-        closeCurlyBracket(NEXT_TOKEN_FLAG);
+        closeCurlyBracket(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void closeCurlyBracket(boolean nextToken) {
@@ -163,18 +216,18 @@ public class ParserValidation implements Validation {
             exceptionHandler.throwSpecialCharacterExpectedException('}', token);
     }
 
-    public void integer() {
-        integer(NEXT_TOKEN_FLAG);
+    public void integerNumber() {
+        integerNumber(NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void integer(boolean nextToken) {
+    public void integerNumber(boolean nextToken) {
         tokenType(nextToken);
         if (tokenType != TokenType.INTEGER_NUMBER)
             exceptionHandler.throwIntegerExpectedException(token);
     }
 
     public void relationalOperator() {
-        relationalOperator(NEXT_TOKEN_FLAG);
+        relationalOperator(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void relationalOperator(boolean nextToken) {
@@ -184,7 +237,7 @@ public class ParserValidation implements Validation {
     }
 
     public void arithmeticOperator() {
-        arithmeticOperator(NEXT_TOKEN_FLAG);
+        arithmeticOperator(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void arithmeticOperator(boolean nextToken) {
@@ -194,7 +247,7 @@ public class ParserValidation implements Validation {
     }
 
     public void sumOrMinus() {
-        sumOrMinus(NEXT_TOKEN_FLAG);
+        sumOrMinus(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void sumOrMinus(boolean nextToken) {
@@ -206,7 +259,7 @@ public class ParserValidation implements Validation {
     // ======= AUTOMÂTOS =======
 
     public void tipo() {
-        tipo(NEXT_TOKEN_FLAG);
+        tipo(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void tipo(boolean nextToken) {
@@ -215,18 +268,8 @@ public class ParserValidation implements Validation {
             exceptionHandler.throwReservedWordExpectedException(new String[]{"int", "float", "char"}, token);
     }
 
-    public void variableValues() {
-        variableValues(NEXT_TOKEN_FLAG);
-    }
-
-    public void variableValues(boolean nextToken) {
-        tokenType(nextToken);
-        if (tokenType != TokenType.CHARACTERE && tokenType != TokenType.REAL_NUMBER && tokenType != TokenType.INTEGER_NUMBER)
-            exceptionHandler.throwVariableValueExpectedException(new String[]{"char", "int", "float"}, token);
-    }
-
     public void termoAux() {
-        termoAux(NEXT_TOKEN_FLAG);
+        termoAux(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void termoAux(boolean nextToken) {
@@ -236,7 +279,7 @@ public class ParserValidation implements Validation {
     }
 
     public void expressaoAritmeticaAux() {
-        expressaoAritmeticaAux(NEXT_TOKEN_FLAG);
+        expressaoAritmeticaAux(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public void expressaoAritmeticaAux(boolean nextToken) {
@@ -248,7 +291,7 @@ public class ParserValidation implements Validation {
     // ======= CHECKS =======
 
     public boolean isWhile() {
-        return isWhile(NEXT_TOKEN_FLAG);
+        return isWhile(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean isWhile(boolean nextToken) {
@@ -257,7 +300,7 @@ public class ParserValidation implements Validation {
     }
 
     public boolean isDo() {
-        return isDo(NEXT_TOKEN_FLAG);
+        return isDo(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean isDo(boolean nextToken) {
@@ -266,7 +309,7 @@ public class ParserValidation implements Validation {
     }
 
     public boolean isFor() {
-        return isFor(NEXT_TOKEN_FLAG);
+        return isFor(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean isFor(boolean nextToken) {
@@ -275,7 +318,7 @@ public class ParserValidation implements Validation {
     }
 
     public boolean isSumOrMinus() {
-        return isSumOrMinus(NEXT_TOKEN_FLAG);
+        return isSumOrMinus(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean isSumOrMinus(boolean nextToken) {
@@ -284,7 +327,7 @@ public class ParserValidation implements Validation {
     }
 
     public boolean isAttribution() {
-        return isAttribution(NEXT_TOKEN_FLAG);
+        return isAttribution(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean isAttribution(boolean nextToken) {
@@ -295,7 +338,7 @@ public class ParserValidation implements Validation {
     // ======= CONJUNTOS FIRST =======
 
     public boolean conjFirstForComando() {
-        return conjFirstForComando(NEXT_TOKEN_FLAG);
+        return conjFirstForComando(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean conjFirstForComando(boolean nextToken) {
@@ -307,7 +350,7 @@ public class ParserValidation implements Validation {
     }
 
     public boolean conjFirstForDeclaracao() {
-        return conjFirstForDeclaracao(NEXT_TOKEN_FLAG);
+        return conjFirstForDeclaracao(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean conjFirstForDeclaracao(boolean nextToken) {
@@ -317,7 +360,7 @@ public class ParserValidation implements Validation {
     }
 
     public boolean conjFirstForAtribuicao() {
-        return conjFirstForAtribuicao(NEXT_TOKEN_FLAG);
+        return conjFirstForAtribuicao(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean conjFirstForAtribuicao(boolean nextToken) {
@@ -326,7 +369,7 @@ public class ParserValidation implements Validation {
     }
 
     public boolean conjFirstForIteracao() {
-        return conjFirstForIteracao(NEXT_TOKEN_FLAG);
+        return conjFirstForIteracao(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean conjFirstForIteracao(boolean nextToken) {
@@ -336,7 +379,7 @@ public class ParserValidation implements Validation {
     }
 
     public boolean conjFirstForDecisao() {
-        return conjFirstForDecisao(NEXT_TOKEN_FLAG);
+        return conjFirstForDecisao(NEXT_TOKEN_FLAG_TRUE);
     }
 
     public boolean conjFirstForDecisao(boolean nextToken) {
@@ -351,15 +394,21 @@ public class ParserValidation implements Validation {
         tokenType = token.getTokenType();
     }
 
-    public void updateToken(boolean nextToken) {
-        getToken(nextToken);
-        type = token.getType();
-        tokenType = token.getTokenType();
-    }
-
     private void getToken(boolean nextToken) {
         if (nextToken)
             token = scanner.nextToken();
+    }
+
+    protected void updateInfo() {
+        actualToken.updateToken();
+        type = actualToken.getType();
+        tokenType = token.getTokenType();
+    }
+
+    protected void updateInfo(boolean nextToken) {
+        actualToken.updateToken(nextToken);
+        type = actualToken.getType();
+        tokenType = token.getTokenType();
     }
 
 }

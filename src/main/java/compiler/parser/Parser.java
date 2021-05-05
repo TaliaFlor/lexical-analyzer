@@ -1,219 +1,252 @@
 package compiler.parser;
 
-import compiler.parser.component.ParserValidation;
+import compiler.component.ExceptionHandler2;
+import compiler.interfaces.Analyser;
 import compiler.parser.exception.TokenExpectedException;
+import compiler.parser.model.ActualToken;
+import compiler.parser.validation.ComposedValidation;
+import compiler.parser.validation.ConjuntoFirstValidation;
+import compiler.parser.validation.TokenValidation;
 import compiler.scanner.Scanner;
 
-public class Parser {
-
-    private static final boolean NEXT_TOKEN_FLAG_TRUE = true;
-    private static final boolean NEXT_TOKEN_FLAG_FALSE = false;
-
-    private final ParserValidation validate;
+public class Parser implements Analyser {
+    private final TokenValidation validate;
+    private final ConjuntoFirstValidation validateConjFirst;
+    private final ComposedValidation validateComposed;
+    private final ExceptionHandler2 exceptionHandler;
+    private final ActualToken actualToken;
 
 
     public Parser(Scanner scanner) {
-        validate = new ParserValidation(scanner);
+        actualToken = ActualToken.getInstance(scanner);
+        validate = new TokenValidation(scanner);
+        validateConjFirst = new ConjuntoFirstValidation(scanner);
+        validateComposed = new ComposedValidation(scanner);
+        exceptionHandler = new ExceptionHandler2();
     }
 
 
+    @Override
     public void start() {
         main();
     }
 
 
-    public void main() {
-        validate.main();
+    // ======= MAIN =======
+
+    private void main() {
+        validate._main();
         validate.openParentesis();
         validate.closeParentesis();
         bloco();
     }
 
-    public void bloco() {
+    // ======= BLOCO =======
+
+    private void bloco() {
         validate.openCurlyBracket();
-        while (validate.conjFirstForComando()) {
+        while (validateConjFirst.comando())
             comando();
+        if (!actualToken.isTokenFound())
+            validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+    }
+
+    // ======= COMANDO =======
+
+    private void comando() {
+        try {
+            boolean firstFound = false;
+            while (validateConjFirst.declaracao()) {
+                if (!firstFound)
+                    firstFound = true;
+                declaracao();
+            }
+            while (validateConjFirst.iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE)) {
+                if (!firstFound)
+                    firstFound = true;
+                iteracao();
+            }
+            while (validateConjFirst.decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE)) {
+                if (!firstFound)
+                    firstFound = true;
+                decisao();
+            }
+
+            actualToken.markTokenNotFound();
+            if (!firstFound) {
+                validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                actualToken.markTokenFound();
+            }
+        } catch (TokenExpectedException e) {
+            exceptionHandler.throwTokenExpectedException("Command of type 'declaração', 'iteração' or 'decisão', or token '}' expected!");
         }
-        validate.closeCurlyBracket(NEXT_TOKEN_FLAG_FALSE);
     }
 
-    public void comando() {
-        while (validate.conjFirstForDeclaracao()) {
-            declaracao();
+    // ======= TIPO =======
+
+    private void tipo() {
+        validateComposed.tipo();
+    }
+
+    // ======= DECLARAÇÃO =======
+
+    private void declaracao() {
+        declaracaoAux();
+        if (!actualToken.isTokenFound()) {
+            validate.identifier();
+            actualToken.resetTokenFoundMark();
         }
-        while (validate.conjFirstForIteracao(NEXT_TOKEN_FLAG_FALSE)) {
-            iteracao();
+        atribuicao();
+        if(!actualToken.isTokenFound()) {
+            validate.semicolon();
+            actualToken.resetTokenFoundMark();
         }
-        while (validate.conjFirstForDecisao(NEXT_TOKEN_FLAG_FALSE)) {
-            decisao();
-        }
     }
 
-    public void tipo() {
-        tipo(NEXT_TOKEN_FLAG_TRUE);
-    }
-
-    public void tipo(boolean nextToken) {
-        validate.tipo(nextToken);
-    }
-
-    public void declaracao() {
-        declaracaoAux();    // + identifier
-        atribuicao();       // + ;
-    }
-
-    public void declaracaoAux() {
+    private void declaracaoAux() {
+        actualToken.markTokenNotFound();
         try {
             tipo();
         } catch (TokenExpectedException e) {
-            validate.identifier(NEXT_TOKEN_FLAG_FALSE);
+            try {
+                validate.identifier(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                actualToken.markTokenFound();
+            } catch (TokenExpectedException e1) {
+                exceptionHandler.throwTokenExpectedException("Reserved word 'int', 'float' or 'char', or identifier expected!");
+            }
         }
     }
 
-    public void atribuicao() {
+    // ======= ATRIBUIÇÃO =======
+
+    private void atribuicao() {
+        actualToken.markTokenNotFound();
         try {
             validate.attribution();
+            atribuicaoAux();
         } catch (TokenExpectedException e) {
-            validate.semicolon(NEXT_TOKEN_FLAG_FALSE);
+            try {
+                validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                actualToken.markTokenFound();
+            } catch (TokenExpectedException e1) {
+                exceptionHandler.throwTokenExpectedException("Token '=' or ';' expected!");
+            }
         }
     }
 
-    public void atribuicaoAux() {
+    private void atribuicaoAux() {
         try {
             fator();
         } catch (TokenExpectedException e) {
             try {
-                expressaoAritmetica(NEXT_TOKEN_FLAG_FALSE);
+                expressaoAritmetica(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                expressaoRelacional(NEXT_TOKEN_FLAG_FALSE);
+                try {
+                    expressaoRelacional(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                } catch (TokenExpectedException e2) {
+                    exceptionHandler.throwTokenExpectedException("Identifier; or variable value of type 'int', 'float' or 'char'; or command of type 'expressão aritmética' or 'expressão relacional' expected!");
+                }
             }
         }
     }
 
-    public void fator() {
-        fator(NEXT_TOKEN_FLAG_TRUE);
+    // ======= FATOR =======
+
+    private void fator() {
+        fator(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void fator(boolean nextToken) {  //TODO consertar try/catch pq ele só está lançando exceção com a informação do último item
+    private void fator(boolean nextToken) {
         try {
-            validate.variableValues(nextToken);
-        } catch (TokenExpectedException e) {
-            validate.identifier(NEXT_TOKEN_FLAG_FALSE);
-        }
-    }
-
-    public void expressaoAritmetica() {
-        expressaoAritmetica(NEXT_TOKEN_FLAG_TRUE);
-    }
-
-    public void expressaoAritmetica(boolean nextToken) {
-        termo(nextToken);
-        expressaoAritmeticaAux();
-    }
-
-    public void termo() {
-        termo(NEXT_TOKEN_FLAG_TRUE);
-    }
-
-    public void termo(boolean nextToken) {
-        fator(nextToken);
-        termoAux();
-    }
-
-    public void termoAux() {
-        try {
-            validate.termoAux();
-            termo();
-        } catch (TokenExpectedException e) {
-            expressaoAritmeticaAux(NEXT_TOKEN_FLAG_FALSE);
-        }
-    }
-
-    public void expressaoAritmeticaAux() {
-        expressaoAritmeticaAux(NEXT_TOKEN_FLAG_TRUE);
-    }
-
-    public void expressaoAritmeticaAux(boolean nextToken) {
-        try {
-            validate.expressaoAritmeticaAux(nextToken);
-            expressaoAritmetica();
+            validate.identifier(nextToken);
         } catch (TokenExpectedException e) {
             try {
-                validate.semicolon(NEXT_TOKEN_FLAG_FALSE);
+                validate.variableValues(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                validate.closeParentesis(NEXT_TOKEN_FLAG_FALSE);
+                exceptionHandler.throwTokenExpectedException("Identifier or variable value of type 'int', 'float' or 'char' expected!");
             }
         }
     }
 
-    public void expressaoRelacional() {
-        expressaoRelacional(NEXT_TOKEN_FLAG_TRUE);
+    // ======= DECISÃO =======
+
+    private void decisao() {
+        validate._if();
+        condicao();
+        bloco();
+        _else();
     }
 
-    public void expressaoRelacional(boolean nextToken) {
+    private void _else() {
+        actualToken.markTokenNotFound();
         try {
-            fatorOuExpressaoAritmetica(nextToken);
-            expressaoRelacionalAux();
+            validate._else();
+            elseAux();
         } catch (TokenExpectedException e) {
             try {
-                expressaoRelacionalAux(NEXT_TOKEN_FLAG_FALSE);
+                validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                validate.relationalOperator(NEXT_TOKEN_FLAG_FALSE);
-                expressaoRelacional();
+                exceptionHandler.throwTokenExpectedException("Reserved word 'else' or special character '}' expected!");
             }
         }
     }
 
-    private void fatorOuExpressaoAritmetica() {
-        fatorOuExpressaoAritmetica(NEXT_TOKEN_FLAG_TRUE);
+    private void elseAux() {
+        try {
+            decisao();
+        } catch (TokenExpectedException e) {
+            try {
+                bloco();
+            } catch (TokenExpectedException e1) {
+                exceptionHandler.throwTokenExpectedException("Command of type 'decisão' or 'bloco' expected!");
+            }
+        }
     }
 
-    private void fatorOuExpressaoAritmetica(boolean nextToken) {    //TODO
+    // ======= CONDIÇÃO =======
+
+    private void condicao() {
+        validate.openParentesis();
+        expressaoRelacional();
+        if(!actualToken.isTokenFound()) {
+            validate.closeParentesis();
+            actualToken.resetTokenFoundMark();
+        }
     }
 
-    public void expressaoRelacionalAux() {
-        expressaoRelacionalAux(NEXT_TOKEN_FLAG_TRUE);
-    }
+    // ======= ITERAÇÃO =======
 
-    private void expressaoRelacionalAux(boolean nextToken) {
-        validate.relationalOperator(nextToken);
-        fatorOuExpressaoAritmetica();
-    }
-
-    public void iteracao() {
+    private void iteracao() {
         try {
             validate._while();
             condicao();
             bloco();
         } catch (TokenExpectedException e) {
             try {
-                validate._do(NEXT_TOKEN_FLAG_FALSE);
+                validate._do(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 bloco();
                 validate._while();
                 condicao();
                 validate.semicolon();
             } catch (TokenExpectedException e1) {
-                validate._for(NEXT_TOKEN_FLAG_FALSE);
-                validate.openParentesis();
-                declaracao();
-                validate.semicolon();
-                expressaoRelacional();
-                validate.semicolon();
-                counter();
-                validate.closeParentesis();
-                bloco();
+                try {
+                    validate._for(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    validate.openParentesis();
+                    declaracao();
+                    expressaoRelacional();
+                    if(!actualToken.isTokenFound()) {
+                        validate.semicolon();
+                        actualToken.resetTokenFoundMark();
+                    }
+                    counter();
+                    validate.closeParentesis();
+                    bloco();
+                } catch (Exception e2) {
+                    exceptionHandler.throwTokenExpectedException("Command of type 'while', 'do-while' or 'for' expected!");
+                }
             }
         }
-    }
-
-    private void condicao() {
-        validate.openParentesis();
-        condicaoAux();
-        validate.closeParentesis();
-    }
-
-    private void condicaoAux() {    //TODO
-
     }
 
     private void counter() {
@@ -224,56 +257,121 @@ public class Parser {
 
     private void counterAux() {
         try {
-            sumOrMinus();
-            sumOrMinus(NEXT_TOKEN_FLAG_FALSE);
-            condicaoAux2();
+            validateComposed.plusOrMinus();
+            counterAux2();
         } catch (TokenExpectedException e) {
-            validate.attribution(NEXT_TOKEN_FLAG_FALSE);
-            validate.identifier();
-            validate.arithmeticOperator();
-            validate.integer();
+            try {
+                validate.attribution(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                validate.identifier();
+                validate.arithmeticOperators();
+                validate.integerNumber();
+            } catch (TokenExpectedException e1) {
+                exceptionHandler.throwTokenExpectedException("Arithmetic operator '+', '-' or '=' expected!");
+            }
         }
     }
 
-    public void sumOrMinus() {
-        sumOrMinus(NEXT_TOKEN_FLAG_TRUE);
-    }
-
-    private void sumOrMinus(boolean nextToken) {
-        validate.sumOrMinus();
-    }
-
-    private void condicaoAux2() {
+    private void counterAux2() {
         try {
-            sumOrMinus();
+            validateComposed.plusOrMinus();
         } catch (TokenExpectedException e) {
-            validate.attribution(NEXT_TOKEN_FLAG_FALSE);
-            validate.integer();
+            try {
+                validate.attribution(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                validate.integerNumber();
+            } catch (TokenExpectedException e1) {
+                exceptionHandler.throwTokenExpectedException("Arithmetic operator '+', '-' or '=' expected!");
+            }
         }
     }
 
-    public void decisao() {
-        validate._if();
-        condicao();
-        bloco();
-        _else();
+    // ======= EXPRESSÃO ARITMÉTICA =======
+
+    private void expressaoAritmetica() {
+        expressaoAritmetica(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    private void _else() {
+    private void expressaoAritmetica(boolean nextToken) {
+        termo(nextToken);
+        expressaoAritmeticaAux();
+    }
+
+    private void expressaoAritmeticaAux() {
+        expressaoAritmeticaAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void expressaoAritmeticaAux(boolean nextToken) {
+        actualToken.markTokenNotFound();
         try {
-            validate._else();
-            elseAux();
+            validateComposed.plusOrMinus(nextToken);
+            expressaoAritmetica();
         } catch (TokenExpectedException e) {
-            validate.closeCurlyBracket(NEXT_TOKEN_FLAG_FALSE);
+            try {
+                validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                actualToken.markTokenFound();
+            } catch (TokenExpectedException e1) {
+                try {
+                    validate.closeParentesis(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    actualToken.markTokenFound();
+                } catch (TokenExpectedException e2) {
+                    exceptionHandler.throwTokenExpectedException("Arithmetic operator '+' or '-'; or special character ';' or ')' expected!");
+                }
+            }
         }
     }
 
-    private void elseAux() {
+    private void termo() {
+        termo(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void termo(boolean nextToken) {
+        fator(nextToken);
+        termoAux();
+    }
+
+    private void termoAux() {
         try {
-            decisao();
+            validateComposed.multOrDiv();
+            termo();
         } catch (TokenExpectedException e) {
-            bloco();
+            try {
+                expressaoAritmeticaAux(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+            } catch (TokenExpectedException e1) {
+                exceptionHandler.throwTokenExpectedException("Arithmetic operator '*', '/', '+' or '-' expected!");
+            }
         }
+    }
+
+    // ======= EXPRESSÃO RELACIONAL =======
+
+    private void expressaoRelacional() {
+        expressaoRelacional(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void expressaoRelacional(boolean nextToken) {
+        try {
+            expressaoAritmetica(nextToken);
+            expressaoRelacionalAux();
+        } catch (TokenExpectedException e) {
+            try {
+                expressaoRelacionalAux(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+            } catch (TokenExpectedException e1) {
+                try {
+                    validate.relationalOperator(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    expressaoRelacional();
+                } catch (TokenExpectedException e2) {
+                    exceptionHandler.throwTokenExpectedException("Identifier; or variable value of type 'int', 'float' or 'char'; or relational operator expected!");
+                }
+            }
+        }
+    }
+
+    private void expressaoRelacionalAux() {
+        expressaoRelacionalAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void expressaoRelacionalAux(boolean nextToken) {
+        validate.relationalOperator(nextToken);
+        expressaoAritmetica(nextToken);
     }
 
 }

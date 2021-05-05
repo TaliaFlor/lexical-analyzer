@@ -28,8 +28,12 @@ public class ExceptionHandler {
         throw tokenExpectedException("Reserved words " + util.stringfy(reservedWords) + " expected!", token);
     }
 
+    public void throwVariableValueExpectedException(String variableValue, Token token) {   // Reserved word 'main' expected!
+        throw tokenExpectedException("Variable value of type '" + variableValue + "' expected!", token);
+    }
+
     public void throwVariableValueExpectedException(String[] variableValues, Token token) {   // Reserved word 'int', 'float' or 'char' expected!
-        throw tokenExpectedException("Variable values types " + util.stringfy(variableValues) + " expected!", token);
+        throw tokenExpectedException("Variable value of type " + util.stringfy(variableValues) + " expected!", token);
     }
 
     public void throwSpecialCharacterExpectedException(char specialCharacter, Token token) {
