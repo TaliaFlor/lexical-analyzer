@@ -2,13 +2,8 @@ package compiler.parser.validation;
 
 import compiler.model.TokenType;
 import compiler.parser.model.ActualToken;
-import compiler.scanner.Scanner;
 
 public class ConjuntoFirstValidation extends ParserValidation {
-
-    public ConjuntoFirstValidation(Scanner scanner) {
-        super(scanner);
-    }
 
 
     // ======= COMANDO =======

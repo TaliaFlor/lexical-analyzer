@@ -10,14 +10,10 @@ import lombok.Getter;
 public class ActualToken {
     public static final boolean NEXT_TOKEN_FLAG_TRUE = true;
     public static final boolean NEXT_TOKEN_FLAG_FALSE = false;
-
-    private boolean tokenFound;
-
     @Getter
     private static ActualToken instance = null;
-
     private final Scanner scanner;
-
+    private boolean tokenFound;
     private Token token;                                    // Token atual
     private Type type;
     private TokenType tokenType;
@@ -46,11 +42,11 @@ public class ActualToken {
             token = scanner.nextToken();
     }
 
-    public void markTokenFound(){
+    public void markTokenFound() {
         tokenFound = true;
     }
 
-    public void markTokenNotFound(){
+    public void markTokenNotFound() {
         tokenFound = false;
     }
 

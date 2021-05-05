@@ -61,15 +61,6 @@ public enum TokenType {
         this.type = type;
     }
 
-
-    public String get() {
-        return value;
-    }
-
-    public Type type() {
-        return type;
-    }
-
     public static List<String> list(Type type) {
         return Arrays.stream(TokenType.values())
                 .filter(tokenType -> tokenType.type == type)
@@ -91,6 +82,14 @@ public enum TokenType {
                 .map(TokenType::get)
                 .collect(joining("'", "'", ", "))
                 .concat(" or '" + tokenTypes.get(tokenTypes.size() - 1) + "'");
+    }
+
+    public String get() {
+        return value;
+    }
+
+    public Type type() {
+        return type;
     }
 
 }

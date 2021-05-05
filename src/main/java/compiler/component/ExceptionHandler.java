@@ -1,70 +1,117 @@
 package compiler.component;
 
 
-import compiler.model.Token;
+import compiler.model.TokenType;
+import compiler.model.Type;
 import compiler.parser.exception.TokenExpectedException;
-import compiler.util.Util;
+import compiler.parser.model.ActualToken;
+
+import java.util.List;
 
 public class ExceptionHandler {
 
-    private final Util util = new Util();
+    private final ActualToken actualToken;
 
 
-    // === TokenExpectedException
-
-    public void throwIdentifierExpectedException(Token token) {   // Identifier expected!
-        throw tokenExpectedException("Identifier expected!", token);
+    public ExceptionHandler() {
+        this.actualToken = ActualToken.getInstance();
     }
 
-    public void throwIntegerExpectedException(Token token) {
-        throw tokenExpectedException("Integer expected!", token);
+
+    // ======= IDENTIFIER =======
+
+    public void throwIdentifierExpectedException() {
+        throw unique(Type.IDENTIFIER);
     }
 
-    public void throwReservedWordExpectedException(String reservedWord, Token token) {   // Reserved word 'main' expected!
-        throw tokenExpectedException("Reserved word '" + reservedWord + "' expected!", token);
+    // ======= RESERVED WORDS =======
+
+    public void throwReservedWordExpectedException() {
+        throw anyOption(Type.RESERVED_WORD);
     }
 
-    public void throwReservedWordExpectedException(String[] reservedWords, Token token) {   // Reserved word 'int', 'float' or 'char' expected!
-        throw tokenExpectedException("Reserved words " + util.stringfy(reservedWords) + " expected!", token);
+    public void throwReservedWordExpectedException(TokenType tokenType) {
+        throw oneOption(tokenType);
     }
 
-    public void throwVariableValueExpectedException(String variableValue, Token token) {   // Reserved word 'main' expected!
-        throw tokenExpectedException("Variable value of type '" + variableValue + "' expected!", token);
+    public void throwReservedWordExpectedException(List<TokenType> tokenTypes) {
+        throw anyOption(Type.RESERVED_WORD, tokenTypes);
     }
 
-    public void throwVariableValueExpectedException(String[] variableValues, Token token) {   // Reserved word 'int', 'float' or 'char' expected!
-        throw tokenExpectedException("Variable value of type " + util.stringfy(variableValues) + " expected!", token);
+    // ======= VARIABLE VALUES =======
+
+    public void throwVariableValueExpectedException() {
+        throw anyOption(Type.VARIABLE_VALUE);
     }
 
-    public void throwSpecialCharacterExpectedException(char specialCharacter, Token token) {
-        throw tokenExpectedException("Special character '" + specialCharacter + "' expected!", token);
+    public void throwVariableValueExpectedException(TokenType tokenType) {
+        throw oneOption(tokenType);
     }
 
-    public void throwArithmeticOperatorExpectedException(char arithmeticOperator, Token token) {
-        throw tokenExpectedException("Arithmetic operator '" + arithmeticOperator + "' expected!", token);
+    // ======= SPECIAL CHARACTERS =======
+
+    public void throwSpecialCharacterExpectedException() {
+        throw anyOption(Type.SPECIAL_CHARACTER);
     }
 
-    public void throwArithmeticOperatorExpectedException(String[] arithmeticOperators, Token token) {
-        throw tokenExpectedException("Arithmetic operators " + util.stringfy(arithmeticOperators) + " expected!", token);
+    public void throwSpecialCharacterExpectedException(TokenType tokenType) {
+        throw oneOption(tokenType);
     }
 
-    public void throwRelationalOperatorExpectedException(String relationalOperator, Token token) {
-        throw tokenExpectedException("Relational operator '" + relationalOperator + "' expected!", token);
+    // ======= ARITHMETIC OPERATORS =======
+
+    public void throwArithmeticOperatorExpectedException() {
+        throw anyOption(Type.ARITHMETIC_OPERATOR);
     }
 
-    public void throwRelationalOperatorExpectedException(String[] relationalOperators, Token token) {   // Reserved word 'int', 'float' or 'char' expected!
-        throw tokenExpectedException("Relational operators " + util.stringfy(relationalOperators) + " expected!", token);
+    public void throwArithmeticOperatorExpectedException(TokenType tokenType) {
+        throw oneOption(tokenType);
     }
 
+    public void throwArithmeticOperatorExpectedException(List<TokenType> tokenTypes) {
+        throw anyOption(Type.ARITHMETIC_OPERATOR, tokenTypes);
+    }
+
+    // ======= RELATIONAL OPERATORS =======
+
+    public void throwRelationalOperatorExpectedException() {
+        throw anyOption(Type.RELATIONAL_OPERATOR);
+    }
+
+    public void throwRelationalOperatorExpectedException(TokenType tokenType) {
+        throw oneOption(tokenType);
+    }
+
+    // ======= PERSONALIZED =======
+
+    public void throwTokenExpectedException(String msg) {
+        throw tokenExpectedException(msg);
+    }
 
     // ======= HELPER METHODS =======
 
-    private TokenExpectedException tokenExpectedException(String msg, Token token) {
-        return new TokenExpectedException(errorMsg(token, msg));
+    private TokenExpectedException unique(Type type) {     // Identifier expected!
+        return tokenExpectedException(type.get() + " expected!");
     }
 
-    private String errorMsg(Token token, String msg) {  // msg + Found ARITHMETIC_OPERATOR_DIVISION --> /. Line 3 and column 4 (3:4).
-        return msg + " Found " + token.toString() + ". " + token.lineByColumn();
+    private TokenExpectedException oneOption(TokenType tokenType) {   // Reserved word 'main' expected!
+        return tokenExpectedException(tokenType.type().get() + " '" + tokenType.get() + "' expected!");
+    }
+
+    private TokenExpectedException anyOption(Type type) {   // Reserved word 'int', 'float' or 'char' expected!
+        return tokenExpectedException(type.get() + " " + TokenType.options(type) + " expected!");
+    }
+
+    private TokenExpectedException anyOption(Type type, List<TokenType> tokenTypes) {   // Reserved word 'int', 'float' or 'char' expected!
+        return tokenExpectedException(type.get() + " " + TokenType.options(tokenTypes) + " expected!");
+    }
+
+    private TokenExpectedException tokenExpectedException(String msg) {
+        return new TokenExpectedException(errorMsg(msg));
+    }
+
+    private String errorMsg(String msg) {  // msg + Found ARITHMETIC_OPERATOR_DIVISION --> /. Line 3 and column 4 (3:4).
+        return msg + " Found " + actualToken.getToken().toString() + ". " + actualToken.getToken().lineByColumn();
     }
 
 }

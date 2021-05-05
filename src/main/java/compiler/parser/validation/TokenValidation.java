@@ -1,15 +1,9 @@
 package compiler.parser.validation;
 
 import compiler.model.TokenType;
-import compiler.model.Type;
 import compiler.parser.model.ActualToken;
-import compiler.scanner.Scanner;
 
 public class TokenValidation extends ParserValidation {
-
-    public TokenValidation(Scanner scanner) {
-        super(scanner);
-    }
 
 
     // ======= IDENTIFIER =======

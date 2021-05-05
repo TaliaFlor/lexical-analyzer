@@ -1,7 +1,6 @@
 package compiler.interfaces;
 
 import compiler.model.TokenType;
-import compiler.model.Type;
 
 public interface Validation {
 

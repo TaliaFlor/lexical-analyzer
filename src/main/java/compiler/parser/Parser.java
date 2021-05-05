@@ -1,6 +1,6 @@
 package compiler.parser;
 
-import compiler.component.ExceptionHandler2;
+import compiler.component.ExceptionHandler;
 import compiler.interfaces.Analyser;
 import compiler.parser.exception.TokenExpectedException;
 import compiler.parser.model.ActualToken;
@@ -13,16 +13,16 @@ public class Parser implements Analyser {
     private final TokenValidation validate;
     private final ConjuntoFirstValidation validateConjFirst;
     private final ComposedValidation validateComposed;
-    private final ExceptionHandler2 exceptionHandler;
+    private final ExceptionHandler exceptionHandler;
     private final ActualToken actualToken;
 
 
     public Parser(Scanner scanner) {
         actualToken = ActualToken.getInstance(scanner);
-        validate = new TokenValidation(scanner);
-        validateConjFirst = new ConjuntoFirstValidation(scanner);
-        validateComposed = new ComposedValidation(scanner);
-        exceptionHandler = new ExceptionHandler2();
+        validate = new TokenValidation();
+        validateConjFirst = new ConjuntoFirstValidation();
+        validateComposed = new ComposedValidation();
+        exceptionHandler = new ExceptionHandler();
     }
 
 
@@ -97,7 +97,7 @@ public class Parser implements Analyser {
             actualToken.resetTokenFoundMark();
         }
         atribuicao();
-        if(!actualToken.isTokenFound()) {
+        if (!actualToken.isTokenFound()) {
             validate.semicolon();
             actualToken.resetTokenFoundMark();
         }
@@ -209,7 +209,7 @@ public class Parser implements Analyser {
     private void condicao() {
         validate.openParentesis();
         expressaoRelacional();
-        if(!actualToken.isTokenFound()) {
+        if (!actualToken.isTokenFound()) {
             validate.closeParentesis();
             actualToken.resetTokenFoundMark();
         }
@@ -235,7 +235,7 @@ public class Parser implements Analyser {
                     validate.openParentesis();
                     declaracao();
                     expressaoRelacional();
-                    if(!actualToken.isTokenFound()) {
+                    if (!actualToken.isTokenFound()) {
                         validate.semicolon();
                         actualToken.resetTokenFoundMark();
                     }
@@ -356,7 +356,7 @@ public class Parser implements Analyser {
                 expressaoRelacionalAux(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
                 try {
-                    validate.relationalOperator(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    validate.relationalOperators(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                     expressaoRelacional();
                 } catch (TokenExpectedException e2) {
                     exceptionHandler.throwTokenExpectedException("Identifier; or variable value of type 'int', 'float' or 'char'; or relational operator expected!");
@@ -370,7 +370,7 @@ public class Parser implements Analyser {
     }
 
     private void expressaoRelacionalAux(boolean nextToken) {
-        validate.relationalOperator(nextToken);
+        validate.relationalOperators(nextToken);
         expressaoAritmetica(nextToken);
     }
 
