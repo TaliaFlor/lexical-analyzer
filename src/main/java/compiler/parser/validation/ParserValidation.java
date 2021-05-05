@@ -88,8 +88,9 @@ public class ParserValidation implements Validation {
 
     protected void updateInfo(boolean nextToken) {
         actualToken.updateToken(nextToken);
+        token = actualToken.getToken();
         type = actualToken.getType();
-        tokenType = token.getTokenType();
+        tokenType = actualToken.getTokenType();
     }
 
 }

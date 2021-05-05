@@ -27,7 +27,7 @@ public class Parser implements Analyser {
 
 
     @Override
-    public void start() {
+    public void parse() {
         main();
     }
 
@@ -46,7 +46,7 @@ public class Parser implements Analyser {
     private void bloco() {
         validate.openCurlyBracket();
         while (validateConjFirst.comando())
-            comando();
+            comando(ActualToken.NEXT_TOKEN_FLAG_FALSE);
         if (!actualToken.isTokenFound())
             validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
     }
@@ -54,22 +54,26 @@ public class Parser implements Analyser {
     // ======= COMANDO =======
 
     private void comando() {
+        comando(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void comando(boolean nextToken) {
         try {
             boolean firstFound = false;
-            while (validateConjFirst.declaracao()) {
+            while (validateConjFirst.declaracao(nextToken)) {
                 if (!firstFound)
                     firstFound = true;
-                declaracao();
+                declaracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             }
             while (validateConjFirst.iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE)) {
                 if (!firstFound)
                     firstFound = true;
-                iteracao();
+                iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             }
             while (validateConjFirst.decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE)) {
                 if (!firstFound)
                     firstFound = true;
-                decisao();
+                decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             }
 
             actualToken.markTokenNotFound();
@@ -78,20 +82,28 @@ public class Parser implements Analyser {
                 actualToken.markTokenFound();
             }
         } catch (TokenExpectedException e) {
-            exceptionHandler.throwTokenExpectedException("Command of type 'declaração', 'iteração' or 'decisão', or token '}' expected!");
+            exceptionHandler.throwTokenExpectedException("Command of type 'declaracao', 'iteracao' or 'decisao', or token '}' expected!");
         }
     }
 
     // ======= TIPO =======
 
     private void tipo() {
-        validateComposed.tipo();
+        tipo(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void tipo(boolean nextToken) {
+        validateComposed.tipo(nextToken);
     }
 
     // ======= DECLARAÇÃO =======
 
     private void declaracao() {
-        declaracaoAux();
+        declaracao(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void declaracao(boolean nextToken) {
+        declaracaoAux(nextToken);
         if (!actualToken.isTokenFound()) {
             validate.identifier();
             actualToken.resetTokenFoundMark();
@@ -104,9 +116,13 @@ public class Parser implements Analyser {
     }
 
     private void declaracaoAux() {
+        declaracaoAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void declaracaoAux(boolean nextToken) {
         actualToken.markTokenNotFound();
         try {
-            tipo();
+            tipo(nextToken);
         } catch (TokenExpectedException e) {
             try {
                 validate.identifier(ActualToken.NEXT_TOKEN_FLAG_FALSE);
@@ -171,7 +187,11 @@ public class Parser implements Analyser {
     // ======= DECISÃO =======
 
     private void decisao() {
-        validate._if();
+        decisao(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void decisao(boolean nextToken) {
+        validate._if(nextToken);
         condicao();
         bloco();
         _else();
@@ -218,8 +238,12 @@ public class Parser implements Analyser {
     // ======= ITERAÇÃO =======
 
     private void iteracao() {
+        iteracao(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void iteracao(boolean nextToken) {
         try {
-            validate._while();
+            validate._while(nextToken);
             condicao();
             bloco();
         } catch (TokenExpectedException e) {

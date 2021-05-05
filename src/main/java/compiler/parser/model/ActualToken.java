@@ -5,7 +5,9 @@ import compiler.model.TokenType;
 import compiler.model.Type;
 import compiler.scanner.Scanner;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 public class ActualToken {
     public static final boolean NEXT_TOKEN_FLAG_TRUE = true;
@@ -38,8 +40,13 @@ public class ActualToken {
     }
 
     private void getToken(boolean nextToken) {
-        if (nextToken)
-            token = scanner.nextToken();
+        try {
+            if (nextToken)
+                token = scanner.nextToken();
+        } catch (ArrayIndexOutOfBoundsException e) {
+            log.info("End of file");
+            System.exit(0);
+        }
     }
 
     public void markTokenFound() {

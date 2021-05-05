@@ -22,7 +22,7 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
     private State state;
     private int posicao;
     private String scanned;
-    private int line;           //TODO consertar count de linhas (off by +2)
+    private int line;           //TODO consertar count de linhas (off by +1)
     private int column;         //TODO consertar count de colunas (off by -1)
 
 
