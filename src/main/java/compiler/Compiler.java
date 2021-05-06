@@ -16,14 +16,7 @@ public class Compiler {
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_testes.c");
 
-//        Scanner scanner = new Scanner("src/main/resources/examples/empty/main.c");
-//        Scanner scanner = new Scanner("src/main/resources/examples/empty/bloco.c");
-//        Scanner scanner = new Scanner("src/main/resources/examples/empty/while.c");
-//        Scanner scanner = new Scanner("src/main/resources/examples/empty/do_while.c");
-        Scanner scanner = new Scanner("src/main/resources/examples/empty/for.c");
-//        Scanner scanner = new Scanner("src/main/resources/examples/empty/if.c");
-//        Scanner scanner = new Scanner("src/main/resources/examples/empty/if-else.c");
-//        Scanner scanner = new Scanner("src/main/resources/examples/empty/if-teste.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/empty/for.c");
 
 //        executeScannerOnly(scanner);
 
@@ -31,12 +24,7 @@ public class Compiler {
 //        parser.parse();
 
         try {
-//            parser.main();
-//            parser.bloco();
-//            parser._while();
-//            parser.doWhile();
-            parser._for();
-//            parser.decisao();
+//            parser._for();  //TODO bug na declaração
         } catch (TokenExpectedException e) {
             log.error(e.getMessage());
         }

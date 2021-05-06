@@ -1,1 +1,1 @@
-if (hasValue) {}
+if (value <= 3) {}

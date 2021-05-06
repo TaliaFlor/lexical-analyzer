@@ -1,5 +1,6 @@
 package compiler.component;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -11,6 +12,15 @@ public class ExceptionHandler {
         _throw = new ExceptionLauncher();
     }
 
+
+    public void _throw(String msg) {
+        _throw(_throw.tokenExpectedException(msg));
+    }
+
+    @SneakyThrows
+    public void _throw(Exception e) {
+        throw e;
+    }
 
     public void handle(String msg) {
         handle(_throw.tokenExpectedException(msg));
