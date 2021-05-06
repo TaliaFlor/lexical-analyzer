@@ -11,14 +11,17 @@ import lombok.extern.slf4j.Slf4j;
 public class Compiler {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner("src/main/resources/examples/somatorio.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/somatorio.c");
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_testes.c");
+
+        Scanner scanner = new Scanner("src/main/resources/examples/while.c");
 
 //        executeScannerOnly(scanner);
 
         Parser parser = new Parser(scanner);
-        parser.parse();
+//        parser.parse();
+        parser._while();
     }
 
     private static void executeScannerOnly(Scanner scanner) {

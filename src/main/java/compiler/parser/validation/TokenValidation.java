@@ -226,6 +226,14 @@ public class TokenValidation extends ParserValidation {
 
     // ======= RELATIONAL OPERATORS =======
 
+    public void relationalOperators() {
+        relationalOperators(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    public void relationalOperators(boolean nextToken) {
+        super.relationalOperators(nextToken);
+    }
+
     public void equal() {
         equal(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }

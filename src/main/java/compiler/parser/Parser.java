@@ -60,7 +60,7 @@ public class Parser implements Analyser {
     private void comando(boolean nextToken) {
         try {
             boolean firstFound = false;
-            while (validateConjFirst.declaracao(nextToken)) {
+            while (validateConjFirst.declaracao(nextToken)) {   //TODO Remover esses while e transformar em try/catch aninhados
                 if (!firstFound)
                     firstFound = true;
                 declaracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
@@ -228,11 +228,14 @@ public class Parser implements Analyser {
 
     private void condicao() {
         validate.openParentesis();
-        expressaoRelacional();
-        if (!actualToken.isTokenFound()) {
-            validate.closeParentesis();
-            actualToken.resetTokenFoundMark();
-        }
+        condicaoAux();
+        validate.closeParentesis();
+    }
+
+    private void condicaoAux() {
+        fator();
+        validate.relationalOperators();
+        fator();
     }
 
     // ======= ITERAÇÃO =======
@@ -243,34 +246,58 @@ public class Parser implements Analyser {
 
     private void iteracao(boolean nextToken) {
         try {
-            validate._while(nextToken);
-            condicao();
-            bloco();
+            _while(nextToken);
         } catch (TokenExpectedException e) {
             try {
-                validate._do(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                bloco();
-                validate._while();
-                condicao();
-                validate.semicolon();
+                doWhile(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
                 try {
-                    validate._for(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                    validate.openParentesis();
-                    declaracao();
-                    expressaoRelacional();
-                    if (!actualToken.isTokenFound()) {
-                        validate.semicolon();
-                        actualToken.resetTokenFoundMark();
-                    }
-                    counter();
-                    validate.closeParentesis();
-                    bloco();
+                    _for(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 } catch (Exception e2) {
                     exceptionHandler.throwTokenExpectedException("Command of type 'while', 'do-while' or 'for' expected!");
                 }
             }
         }
+    }
+
+    public void _while() {
+        _while(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    public void _while(boolean nextToken) {
+        validate._while(nextToken);
+        condicao();
+        bloco();
+    }
+
+    private void doWhile() {
+        doWhile(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void doWhile(boolean nextToken) {
+        validate._do(nextToken);
+        bloco();
+        validate._while();
+        condicao();
+        validate.semicolon();
+    }
+
+    private void _for() {
+        _for(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void _for(boolean nextToken) {
+        validate._for(nextToken);
+        validate.openParentesis();
+        declaracao();
+        condicaoAux();
+        if (!actualToken.isTokenFound()) {
+            validate.semicolon();
+            actualToken.resetTokenFoundMark();
+        }
+        counter();
+        validate.closeParentesis();
+        bloco();
     }
 
     private void counter() {
