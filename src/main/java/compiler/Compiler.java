@@ -15,13 +15,13 @@ public class Compiler {
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_testes.c");
 
-        Scanner scanner = new Scanner("src/main/resources/examples/while.c");
+        Scanner scanner = new Scanner("src/main/resources/examples/itens/bloco.c");
 
 //        executeScannerOnly(scanner);
 
         Parser parser = new Parser(scanner);
 //        parser.parse();
-        parser._while();
+        parser.bloco();
     }
 
     private static void executeScannerOnly(Scanner scanner) {

@@ -43,7 +43,7 @@ public class Parser implements Analyser {
 
     // ======= BLOCO =======
 
-    private void bloco() {
+    public void bloco() {
         validate.openCurlyBracket();
         while (validateConjFirst.comando())
             comando(ActualToken.NEXT_TOKEN_FLAG_FALSE);
@@ -58,31 +58,24 @@ public class Parser implements Analyser {
     }
 
     private void comando(boolean nextToken) {
+        actualToken.markTokenNotFound();
         try {
-            boolean firstFound = false;
-            while (validateConjFirst.declaracao(nextToken)) {   //TODO Remover esses while e transformar em try/catch aninhados
-                if (!firstFound)
-                    firstFound = true;
-                declaracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-            }
-            while (validateConjFirst.iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE)) {
-                if (!firstFound)
-                    firstFound = true;
-                iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-            }
-            while (validateConjFirst.decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE)) {
-                if (!firstFound)
-                    firstFound = true;
-                decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-            }
-
-            actualToken.markTokenNotFound();
-            if (!firstFound) {
-                validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                actualToken.markTokenFound();
-            }
+            declaracao(nextToken);
         } catch (TokenExpectedException e) {
-            exceptionHandler.throwTokenExpectedException("Command of type 'declaracao', 'iteracao' or 'decisao', or token '}' expected!");
+            try {
+                iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+            } catch (TokenExpectedException e1) {
+                try {
+                    decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                } catch (TokenExpectedException e2) {
+                    try {
+                        validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                        actualToken.markTokenFound();
+                    } catch (TokenExpectedException e3) {
+                        exceptionHandler.throwTokenExpectedException("Command of type 'declaracao', 'iteracao' or 'decisao'; or token '}' expected!");
+                    }
+                }
+            }
         }
     }
 
