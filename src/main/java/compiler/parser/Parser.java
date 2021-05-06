@@ -139,29 +139,13 @@ public class Parser implements Analyser {
         actualToken.markTokenNotFound();
         try {
             validate.attribution();
-            atribuicaoAux();
+            expressaoRelacional();
         } catch (TokenExpectedException e) {
             try {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
                 exceptionHandler.throwTokenExpectedException("Token '=' or ';' expected!");
-            }
-        }
-    }
-
-    private void atribuicaoAux() {
-        try {
-            fator();
-        } catch (TokenExpectedException e) {
-            try {
-                expressaoAritmetica(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-            } catch (TokenExpectedException e1) {
-                try {
-                    expressaoRelacional(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                } catch (TokenExpectedException e2) {
-                    exceptionHandler.throwTokenExpectedException("Identifier; or variable value of type 'int', 'float' or 'char'; or command of type 'expressão aritmética' or 'expressão relacional' expected!");
-                }
             }
         }
     }
@@ -260,11 +244,11 @@ public class Parser implements Analyser {
         }
     }
 
-    public void _while() {
+    private void _while() {
         _while(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void _while(boolean nextToken) {
+    private void _while(boolean nextToken) {
         validate._while(nextToken);
         condicao();
         bloco();
@@ -421,8 +405,18 @@ public class Parser implements Analyser {
     }
 
     private void expressaoRelacionalAux(boolean nextToken) {
-        validate.relationalOperators(nextToken);
-        expressaoAritmetica(nextToken);
+        actualToken.markTokenNotFound();
+        try {
+            validate.relationalOperators(nextToken);
+            expressaoAritmetica();
+        } catch (TokenExpectedException e) {
+            try {
+                validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                actualToken.markTokenFound();
+            } catch (TokenExpectedException e1) {
+                exceptionHandler.throwTokenExpectedException("Relational operation or ';' expected!");
+            }
+        }
     }
 
 }
