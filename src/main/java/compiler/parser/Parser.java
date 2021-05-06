@@ -1,6 +1,6 @@
 package compiler.parser;
 
-import compiler.component.ExceptionHandler;
+import compiler.component.ExceptionLauncher;
 import compiler.interfaces.Analyser;
 import compiler.parser.exception.TokenExpectedException;
 import compiler.parser.model.ActualToken;
@@ -15,7 +15,7 @@ public class Parser implements Analyser {
     public final TokenValidation validate;
     public final ConjuntoFirstValidation validateConjFirst;
     public final ComposedValidation validateComposed;
-    public final ExceptionHandler exceptionHandler;
+    public final ExceptionLauncher _throw;
     public final ActualToken actualToken;
 
 
@@ -24,7 +24,7 @@ public class Parser implements Analyser {
         validate = new TokenValidation();
         validateConjFirst = new ConjuntoFirstValidation();
         validateComposed = new ComposedValidation();
-        exceptionHandler = new ExceptionHandler();
+        _throw = new ExceptionLauncher();
     }
 
 
@@ -84,7 +84,7 @@ public class Parser implements Analyser {
                         validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                         actualToken.markTokenFound();
                     } catch (TokenExpectedException e3) {
-                        log.error(exceptionHandler.throwTokenExpectedException("Command of type 'declaracao', 'iteracao' or 'decisao'; or token '}' expected!").getMessage());
+                        log.error(_throw.tokenExpectedException("Command of type 'declaracao', 'iteracao' or 'decisao'; or token '}' expected!").getMessage());
                     }
                 }
             }
@@ -141,7 +141,7 @@ public class Parser implements Analyser {
                 validate.identifier(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                log.error(exceptionHandler.throwTokenExpectedException("Reserved word 'int', 'float' or 'char', or identifier expected!").getMessage());
+                log.error(_throw.tokenExpectedException("Reserved word 'int', 'float' or 'char', or identifier expected!").getMessage());
             }
         }
     }
@@ -158,7 +158,7 @@ public class Parser implements Analyser {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                log.error(exceptionHandler.throwTokenExpectedException("Token '=' or ';' expected!").getMessage());
+                log.error(_throw.tokenExpectedException("Token '=' or ';' expected!").getMessage());
             }
         }
     }
@@ -176,7 +176,7 @@ public class Parser implements Analyser {
             try {
                 validate.variableValues(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                log.error(exceptionHandler.throwTokenExpectedException("Identifier or variable value of type 'int', 'float' or 'char' expected!").getMessage());
+                log.error(_throw.tokenExpectedException("Identifier or variable value of type 'int', 'float' or 'char' expected!").getMessage());
             }
         }
     }
@@ -208,7 +208,7 @@ public class Parser implements Analyser {
                 validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                log.error(exceptionHandler.throwTokenExpectedException("Reserved word 'else' or special character '}' expected!").getMessage());
+                log.error(_throw.tokenExpectedException("Reserved word 'else' or special character '}' expected!").getMessage());
             }
         }
     }
@@ -220,7 +220,7 @@ public class Parser implements Analyser {
             try {
                 bloco();
             } catch (TokenExpectedException e1) {
-                log.error(exceptionHandler.throwTokenExpectedException("Command of type 'decisão' or 'bloco' expected!").getMessage());
+                log.error(_throw.tokenExpectedException("Command of type 'decisão' or 'bloco' expected!").getMessage());
             }
         }
     }
@@ -263,7 +263,7 @@ public class Parser implements Analyser {
                 try {
                     _for(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 } catch (Exception e2) {
-                    log.error(exceptionHandler.throwTokenExpectedException("Command of type 'while', 'do-while' or 'for' expected!").getMessage());
+                    log.error(_throw.tokenExpectedException("Command of type 'while', 'do-while' or 'for' expected!").getMessage());
                 }
             }
         }
@@ -342,7 +342,7 @@ public class Parser implements Analyser {
                 validate.arithmeticOperators();
                 validate.integerNumber();
             } catch (TokenExpectedException e1) {
-                log.error(exceptionHandler.throwTokenExpectedException("Arithmetic operator '+', '-' or '=' expected!").getMessage());
+                log.error(_throw.tokenExpectedException("Arithmetic operator '+', '-' or '=' expected!").getMessage());
             }
         }
     }
@@ -355,7 +355,7 @@ public class Parser implements Analyser {
                 validate.attribution(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 validate.integerNumber();
             } catch (TokenExpectedException e1) {
-                log.error(exceptionHandler.throwTokenExpectedException("Arithmetic operator '+', '-' or '=' expected!").getMessage());
+                log.error(_throw.tokenExpectedException("Arithmetic operator '+', '-' or '=' expected!").getMessage());
             }
         }
     }
@@ -394,7 +394,7 @@ public class Parser implements Analyser {
                     validate.closeParentesis(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                     actualToken.markTokenFound();
                 } catch (TokenExpectedException e2) {
-                    log.error(exceptionHandler.throwTokenExpectedException("Arithmetic operator '+' or '-'; or special character ';' or ')' expected!").getMessage());
+                    log.error(_throw.tokenExpectedException("Arithmetic operator '+' or '-'; or special character ';' or ')' expected!").getMessage());
                 }
             }
         }
@@ -421,7 +421,7 @@ public class Parser implements Analyser {
             try {
                 expressaoAritmeticaAux(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                log.error(exceptionHandler.throwTokenExpectedException("Arithmetic operator '*', '/', '+' or '-' expected!").getMessage());
+                log.error(_throw.tokenExpectedException("Arithmetic operator '*', '/', '+' or '-' expected!").getMessage());
             }
         }
     }
@@ -444,7 +444,7 @@ public class Parser implements Analyser {
                     validate.relationalOperators(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                     expressaoRelacional();
                 } catch (TokenExpectedException e2) {
-                    log.error(exceptionHandler.throwTokenExpectedException("Identifier; or variable value of type 'int', 'float' or 'char'; or relational operator expected!").getMessage());
+                    log.error(_throw.tokenExpectedException("Identifier; or variable value of type 'int', 'float' or 'char'; or relational operator expected!").getMessage());
                 }
             }
         }
@@ -464,7 +464,7 @@ public class Parser implements Analyser {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                log.error(exceptionHandler.throwTokenExpectedException("Relational operation or ';' expected!").getMessage());
+                log.error(_throw.tokenExpectedException("Relational operation or ';' expected!").getMessage());
             }
         }
     }

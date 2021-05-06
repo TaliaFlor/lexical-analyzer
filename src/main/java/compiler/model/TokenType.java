@@ -72,7 +72,8 @@ public enum TokenType {
         List<String> list = list(type);
         return list.stream()
                 .limit(list.size() - 1)
-                .collect(joining("'", "'", ", "))
+                .map(item -> "'" + item + "'")
+                .collect(joining(", "))
                 .concat(" or '" + list.get(list.size() - 1) + "'");
     }
 
@@ -80,7 +81,8 @@ public enum TokenType {
         return tokenTypes.stream()
                 .limit(tokenTypes.size() - 1)
                 .map(TokenType::get)
-                .collect(joining("'", "'", ", "))
+                .map(item -> "'" + item + "'")
+                .collect(joining(", "))
                 .concat(" or '" + tokenTypes.get(tokenTypes.size() - 1) + "'");
     }
 

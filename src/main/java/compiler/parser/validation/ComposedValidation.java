@@ -17,7 +17,7 @@ public class ComposedValidation extends ParserValidation {
     public void tipo(boolean nextToken) {
         updateInfo(nextToken);
         if (tokenType != TokenType.INT && tokenType != TokenType.FLOAT && tokenType != TokenType.CHAR)
-            exceptionHandler.throwReservedWordExpectedException(Arrays.asList(TokenType.INT, TokenType.FLOAT, TokenType.CHAR));
+            _throw.reservedWordExpectedException(Arrays.asList(TokenType.INT, TokenType.FLOAT, TokenType.CHAR));
     }
 
     // ======= PLUS OR MINUS =======
@@ -29,7 +29,7 @@ public class ComposedValidation extends ParserValidation {
     public void plusOrMinus(boolean nextToken) {
         updateInfo(nextToken);
         if (tokenType != TokenType.PLUS && tokenType != TokenType.MINUS)
-            exceptionHandler.throwArithmeticOperatorExpectedException(Arrays.asList(TokenType.PLUS, TokenType.MINUS));
+            _throw.arithmeticOperatorExpectedException(Arrays.asList(TokenType.PLUS, TokenType.MINUS));
     }
 
     // ======= MULT OR DIV =======
@@ -41,7 +41,7 @@ public class ComposedValidation extends ParserValidation {
     public void multOrDiv(boolean nextToken) {
         updateInfo(nextToken);
         if (tokenType != TokenType.MULTIPLICATION && tokenType != TokenType.DIVISION)
-            exceptionHandler.throwArithmeticOperatorExpectedException(Arrays.asList(TokenType.MULTIPLICATION, TokenType.DIVISION));
+            _throw.arithmeticOperatorExpectedException(Arrays.asList(TokenType.MULTIPLICATION, TokenType.DIVISION));
     }
 
 }

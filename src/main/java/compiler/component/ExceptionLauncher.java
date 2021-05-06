@@ -8,105 +8,105 @@ import compiler.parser.model.ActualToken;
 
 import java.util.List;
 
-public class ExceptionHandler {
+public class ExceptionLauncher {
 
     private final ActualToken actualToken;
 
 
-    public ExceptionHandler() {
+    public ExceptionLauncher() {
         this.actualToken = ActualToken.getInstance();
     }
 
 
     // ======= IDENTIFIER =======
 
-    public void throwIdentifierExpectedException() {
+    public void identifierExpectedException() {
         throw unique(Type.IDENTIFIER);
     }
 
     // ======= RESERVED WORDS =======
 
-    public void throwReservedWordExpectedException() {
+    public void reservedWordExpectedException() {
         throw anyOption(Type.RESERVED_WORD);
     }
 
-    public void throwReservedWordExpectedException(TokenType tokenType) {
+    public void reservedWordExpectedException(TokenType tokenType) {
         throw oneOption(tokenType);
     }
 
-    public void throwReservedWordExpectedException(List<TokenType> tokenTypes) {
+    public void reservedWordExpectedException(List<TokenType> tokenTypes) {
         throw anyOption(Type.RESERVED_WORD, tokenTypes);
     }
 
     // ======= VARIABLE VALUES =======
 
-    public void throwVariableValueExpectedException() {
+    public void variableValueExpectedException() {
         throw anyOption(Type.VARIABLE_VALUE);
     }
 
-    public void throwVariableValueExpectedException(TokenType tokenType) {
+    public void variableValueExpectedException(TokenType tokenType) {
         throw oneOption(tokenType);
     }
 
     // ======= SPECIAL CHARACTERS =======
 
-    public void throwSpecialCharacterExpectedException() {
+    public void specialCharacterExpectedException() {
         throw anyOption(Type.SPECIAL_CHARACTER);
     }
 
-    public void throwSpecialCharacterExpectedException(TokenType tokenType) {
+    public void specialCharacterExpectedException(TokenType tokenType) {
         throw oneOption(tokenType);
     }
 
     // ======= ARITHMETIC OPERATORS =======
 
-    public void throwArithmeticOperatorExpectedException() {
+    public void arithmeticOperatorExpectedException() {
         throw anyOption(Type.ARITHMETIC_OPERATOR);
     }
 
-    public void throwArithmeticOperatorExpectedException(TokenType tokenType) {
+    public void arithmeticOperatorExpectedException(TokenType tokenType) {
         throw oneOption(tokenType);
     }
 
-    public void throwArithmeticOperatorExpectedException(List<TokenType> tokenTypes) {
+    public void arithmeticOperatorExpectedException(List<TokenType> tokenTypes) {
         throw anyOption(Type.ARITHMETIC_OPERATOR, tokenTypes);
     }
 
     // ======= RELATIONAL OPERATORS =======
 
-    public void throwRelationalOperatorExpectedException() {
+    public void relationalOperatorExpectedException() {
         throw anyOption(Type.RELATIONAL_OPERATOR);
     }
 
-    public void throwRelationalOperatorExpectedException(TokenType tokenType) {
+    public void relationalOperatorExpectedException(TokenType tokenType) {
         throw oneOption(tokenType);
     }
 
     // ======= PERSONALIZED =======
 
-    public TokenExpectedException throwTokenExpectedException(String msg) {
-        return tokenExpectedException(msg);
+    public TokenExpectedException tokenExpectedException(String msg) {
+        return createTokenExpectedException(msg);
     }
 
     // ======= HELPER METHODS =======
 
     private TokenExpectedException unique(Type type) {     // Identifier expected!
-        return tokenExpectedException(type.get() + " expected!");
+        return createTokenExpectedException(type.get() + " expected!");
     }
 
     private TokenExpectedException oneOption(TokenType tokenType) {   // Reserved word 'main' expected!
-        return tokenExpectedException(tokenType.type().get() + " '" + tokenType.get() + "' expected!");
+        return createTokenExpectedException(tokenType.type().get() + " '" + tokenType.get() + "' expected!");
     }
 
     private TokenExpectedException anyOption(Type type) {   // Reserved word 'int', 'float' or 'char' expected!
-        return tokenExpectedException(type.get() + " " + TokenType.options(type) + " expected!");
+        return createTokenExpectedException(type.get() + " " + TokenType.options(type) + " expected!");
     }
 
     private TokenExpectedException anyOption(Type type, List<TokenType> tokenTypes) {   // Reserved word 'int', 'float' or 'char' expected!
-        return tokenExpectedException(type.get() + " " + TokenType.options(tokenTypes) + " expected!");
+        return createTokenExpectedException(type.get() + " " + TokenType.options(tokenTypes) + " expected!");
     }
 
-    private TokenExpectedException tokenExpectedException(String msg) {
+    private TokenExpectedException createTokenExpectedException(String msg) {
         return new TokenExpectedException(errorMsg(msg));
     }
 
