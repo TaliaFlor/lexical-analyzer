@@ -17,8 +17,7 @@ public class ConjuntoFirstValidation extends ParserValidation {
         return tokenType == TokenType.IDENTIFIER
                 || tokenType == TokenType.IF
                 || tokenType == TokenType.INT || tokenType == TokenType.FLOAT || tokenType == TokenType.CHAR
-                || tokenType == TokenType.WHILE || tokenType == TokenType.DO || tokenType == TokenType.FOR
-                || tokenType == TokenType.CLOSE_CURLY_BRACKET;
+                || tokenType == TokenType.WHILE || tokenType == TokenType.DO || tokenType == TokenType.FOR;
     }
 
     // ======= DECISÃO =======
@@ -53,6 +52,17 @@ public class ConjuntoFirstValidation extends ParserValidation {
     public boolean iteracao(boolean nextToken) {
         updateInfo(nextToken);
         return tokenType == TokenType.WHILE || tokenType == TokenType.DO || tokenType == TokenType.FOR;
+    }
+
+    // ======= PLUS OR MINUS =======
+
+    public boolean plusOrMinus() {
+        return plusOrMinus(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    public boolean plusOrMinus(boolean nextToken) {
+        updateInfo(nextToken);
+        return tokenType == TokenType.PLUS || tokenType == TokenType.MINUS;
     }
 
 }

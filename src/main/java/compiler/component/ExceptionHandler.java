@@ -84,8 +84,8 @@ public class ExceptionHandler {
 
     // ======= PERSONALIZED =======
 
-    public void throwTokenExpectedException(String msg) {
-        throw tokenExpectedException(msg);
+    public TokenExpectedException throwTokenExpectedException(String msg) {
+        return tokenExpectedException(msg);
     }
 
     // ======= HELPER METHODS =======

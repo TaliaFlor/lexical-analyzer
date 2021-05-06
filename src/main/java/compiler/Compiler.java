@@ -2,6 +2,7 @@ package compiler;
 
 import compiler.model.Token;
 import compiler.parser.Parser;
+import compiler.parser.exception.TokenExpectedException;
 import compiler.scanner.Scanner;
 import compiler.scanner.exception.MalformedTokenException;
 import compiler.scanner.exception.UnrecognizedTokenException;
@@ -15,13 +16,31 @@ public class Compiler {
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_testes.c");
 
-        Scanner scanner = new Scanner("src/main/resources/examples/itens/bloco.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/empty/main.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/empty/bloco.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/empty/while.c");
+        Scanner scanner = new Scanner("src/main/resources/examples/empty/do_while.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/empty/for.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/empty/if.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/empty/if-else.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/empty/if-teste.c");
 
 //        executeScannerOnly(scanner);
 
         Parser parser = new Parser(scanner);
 //        parser.parse();
-        parser.bloco();
+
+        try {
+//            parser.main();
+//            parser.bloco();
+//            parser._while();
+            parser.doWhile();
+//            parser._for();
+//            parser.decisao();
+        } catch (TokenExpectedException e) {
+            log.error(e.getMessage());
+        }
+
     }
 
     private static void executeScannerOnly(Scanner scanner) {
