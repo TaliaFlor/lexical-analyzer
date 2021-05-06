@@ -16,7 +16,11 @@ public class Compiler {
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
 //            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_testes.c");
 
+//        Scanner scanner = new Scanner("src/main/resources/examples/itens/bloco.c");
+//        Scanner scanner = new Scanner("src/main/resources/examples/itens/declaracao.c");
 //        Scanner scanner = new Scanner("src/main/resources/examples/empty/for.c");
+
+        Scanner scanner = new Scanner("src/main/resources/examples/composed/while-if.c");
 
 //        executeScannerOnly(scanner);
 
@@ -24,7 +28,9 @@ public class Compiler {
 //        parser.parse();
 
         try {
-//            parser._for();  //TODO bug na declaração
+//            parser.bloco();  //TODO bug na declaração
+//            parser._for();
+            parser._while();
         } catch (TokenExpectedException e) {
             log.error(e.getMessage());
         }
