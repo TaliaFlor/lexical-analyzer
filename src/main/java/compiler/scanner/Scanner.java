@@ -51,6 +51,7 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
         try {
             String text = new String(Files.readAllBytes(Paths.get(filename)), StandardCharsets.UTF_8);
 //            log.trace("File received\n" + text);
+            log.trace("File received");
             this.content = text.toCharArray();
         } catch (Exception e) {
             log.error("Erro ao ler arquivo - " + e.getMessage());

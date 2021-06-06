@@ -41,7 +41,7 @@ public class Parser implements Analyser {
             validate.closeParentesis();
             bloco();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -57,7 +57,7 @@ public class Parser implements Analyser {
                 actualToken.resetTokenFoundMark();
             }
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -82,7 +82,7 @@ public class Parser implements Analyser {
                         validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                         actualToken.markTokenFound();
                     } catch (TokenExpectedException e3) {
-                        handler._throw("Command of type 'declaracao', 'iteracao' or 'decisao'; or token '}' expected!");
+                        handler.handle("Command of type 'declaracao', 'iteracao' or 'decisao'; or token '}' expected!");
                     }
                 }
             }
@@ -99,7 +99,7 @@ public class Parser implements Analyser {
         try {
             validateComposed.tipo(nextToken);
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -122,7 +122,7 @@ public class Parser implements Analyser {
                 actualToken.resetTokenFoundMark();
             }
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -139,7 +139,7 @@ public class Parser implements Analyser {
                 validate.identifier(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                handler._throw("Reserved word 'int', 'float' or 'char', or identifier expected!");
+                handler.handle("Reserved word 'int', 'float' or 'char', or identifier expected!");
             }
         }
     }
@@ -156,7 +156,7 @@ public class Parser implements Analyser {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                handler._throw("Token '=' or ';' expected!");
+                handler.handle("Token '=' or ';' expected!");
             }
         }
     }
@@ -174,7 +174,7 @@ public class Parser implements Analyser {
             try {
                 validate.variableValues(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                handler._throw("Identifier or variable value of type 'int', 'float' or 'char' expected!");
+                handler.handle("Identifier or variable value of type 'int', 'float' or 'char' expected!");
             }
         }
     }
@@ -192,7 +192,7 @@ public class Parser implements Analyser {
             bloco();
             _else();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -206,7 +206,7 @@ public class Parser implements Analyser {
                 validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                handler._throw("Reserved word 'else' or special character '}' expected!");
+                handler.handle("Reserved word 'else' or special character '}' expected!");
             }
         }
     }
@@ -218,7 +218,7 @@ public class Parser implements Analyser {
             try {
                 bloco();
             } catch (TokenExpectedException e1) {
-                handler._throw("Command of type 'decisão' or 'bloco' expected!");
+                handler.handle("Command of type 'decisão' or 'bloco' expected!");
             }
         }
     }
@@ -231,7 +231,7 @@ public class Parser implements Analyser {
             condicaoAux();
             validate.closeParentesis();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -241,7 +241,7 @@ public class Parser implements Analyser {
             validate.relationalOperators();
             fator();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -261,7 +261,7 @@ public class Parser implements Analyser {
                 try {
                     _for(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 } catch (Exception e2) {
-                    handler._throw("Command of type 'while', 'do-while' or 'for' expected!");
+                    handler.handle("Command of type 'while', 'do-while' or 'for' expected!");
                 }
             }
         }
@@ -277,7 +277,7 @@ public class Parser implements Analyser {
             condicao();
             bloco();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -293,7 +293,7 @@ public class Parser implements Analyser {
             condicao();
             validate.semicolon();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -315,7 +315,7 @@ public class Parser implements Analyser {
             validate.closeParentesis();
             bloco();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -325,7 +325,7 @@ public class Parser implements Analyser {
             counterAux();
             validate.semicolon();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -340,7 +340,7 @@ public class Parser implements Analyser {
                 validate.arithmeticOperators();
                 validate.integerNumber();
             } catch (TokenExpectedException e1) {
-                handler._throw("Arithmetic operator '+', '-' or '=' expected!");
+                handler.handle("Arithmetic operator '+', '-' or '=' expected!");
             }
         }
     }
@@ -353,7 +353,7 @@ public class Parser implements Analyser {
                 validate.attribution(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 validate.integerNumber();
             } catch (TokenExpectedException e1) {
-                handler._throw("Arithmetic operator '+', '-' or '=' expected!");
+                handler.handle("Arithmetic operator '+', '-' or '=' expected!");
             }
         }
     }
@@ -370,7 +370,7 @@ public class Parser implements Analyser {
             if (validateConjFirst.plusOrMinus(ActualToken.NEXT_TOKEN_FLAG_FALSE))
                 expressaoAritmeticaAux();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -392,7 +392,7 @@ public class Parser implements Analyser {
                     validate.closeParentesis(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                     actualToken.markTokenFound();
                 } catch (TokenExpectedException e2) {
-                    handler._throw("Arithmetic operator '+' or '-'; or special character ';' or ')' expected!");
+                    handler.handle("Arithmetic operator '+' or '-'; or special character ';' or ')' expected!");
                 }
             }
         }
@@ -407,7 +407,7 @@ public class Parser implements Analyser {
             fator(nextToken);
             termoAux();
         } catch (TokenExpectedException e) {
-            handler._throw(e);
+            handler.handle(e);
         }
     }
 
@@ -419,7 +419,7 @@ public class Parser implements Analyser {
             try {
                 expressaoAritmeticaAux(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                handler._throw("Arithmetic operator '*', '/', '+' or '-' expected!");
+                handler.handle("Arithmetic operator '*', '/', '+' or '-' expected!");
             }
         }
     }
@@ -442,7 +442,7 @@ public class Parser implements Analyser {
                     validate.relationalOperators(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                     expressaoRelacional();
                 } catch (TokenExpectedException e2) {
-                    handler._throw("Identifier; or variable value of type 'int', 'float' or 'char'; or relational operator expected!");
+                    handler.handle("Identifier; or variable value of type 'int', 'float' or 'char'; or relational operator expected!");
                 }
             }
         }
@@ -462,7 +462,7 @@ public class Parser implements Analyser {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                handler._throw("Relational operation or ';' expected!");
+                handler.handle("Relational operation or ';' expected!");
             }
         }
     }

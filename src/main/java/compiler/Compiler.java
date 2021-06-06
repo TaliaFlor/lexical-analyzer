@@ -12,29 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 public class Compiler {
 
     public static void main(String[] args) {
-//        Scanner scanner = new Scanner("src/main/resources/examples/somatorio.c");
-//            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_erro.c");        // Exemplo de arquivo com erro
-//            Scanner scanner = new Scanner("src/main/resources/examples/somatorio_testes.c");
-
-//        Scanner scanner = new Scanner("src/main/resources/examples/itens/bloco.c");
-//        Scanner scanner = new Scanner("src/main/resources/examples/itens/declaracao.c");
-//        Scanner scanner = new Scanner("src/main/resources/examples/empty/for.c");
-
-        Scanner scanner = new Scanner("src/main/resources/examples/composed/while-if.c");
-
-//        executeScannerOnly(scanner);
-
+        Scanner scanner = new Scanner("src/main/resources/examples/testes.c");
         Parser parser = new Parser(scanner);
-//        parser.parse();
-
         try {
-//            parser.bloco();  //TODO bug na declaração
-//            parser._for();
-            parser._while();
+            parser.main();
+            log.info("Parsing finished with success! No errors on input file");
         } catch (TokenExpectedException e) {
             log.error(e.getMessage());
         }
-
     }
 
     private static void executeScannerOnly(Scanner scanner) {
