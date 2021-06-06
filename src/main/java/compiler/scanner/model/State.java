@@ -1,4 +1,4 @@
-package compiler.model;
+package compiler.scanner.model;
 
 /**
  * <p>
@@ -8,5 +8,5 @@ package compiler.model;
 public enum State {
     ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE,
     TEN, ELEVEN, TWELVE, THIRTEEN, FOURTEEN, FIFTHTEEN, SIXTEEN, SEVENTEEN, EIGHTEEN, NINETEEN,
-    TWENTY, TWENTY_ONE
+    TWENTY, TWENTY_ONE, TWENTY_TWO, TWENTY_THREE, TWENTY_FOUR
 }

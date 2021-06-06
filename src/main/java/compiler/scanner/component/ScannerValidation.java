@@ -1,9 +1,9 @@
-package compiler.util;
+package compiler.scanner.component;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class Utils {
+public class ScannerValidation {
 
     private static final Map<Integer, String> RESERVED_WORDS = new HashMap<Integer, String>() {{
         put(1, "main");
@@ -25,7 +25,7 @@ public class Utils {
 
     // letra ::= [a-z]
     public static boolean isLetter(char c) {
-        return (c >= 'a' && c <= 'z');
+        return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
     }
 
     // char ::= 'letra' | 'dígito'
@@ -35,7 +35,7 @@ public class Utils {
 
     // operador_relacional ::= <  |  >  |  <=  |  >=  |  ==  |  !=
     public static boolean isRelationalOperator(char c) {
-        return c == '>' || c == '<'  || c == '!';
+        return c == '>' || c == '<' || c == '!';
     }
 
     // operador_aritmético ::= "+"  |  "-"  |  "*"  |  "/"  |  "="
@@ -47,11 +47,6 @@ public class Utils {
     public static boolean isSpecialChar(char c) {
         return c == ')' || c == '(' || c == '}' || c == '{'
                 || c == ',' || c == ';';
-    }
-
-    // Caracteres não consumíveis
-    public static boolean isNonConsumable(char c) {
-        return c == ' ' || c == '\t' || c == '\n' || c == '\r';
     }
 
     //  palavra_reservada ::= main  |  if  |  else  |  while  |  do  |  for  |  int  |  float  |  char
@@ -70,22 +65,22 @@ public class Utils {
     }
 
     // =
-    public static boolean isEquals(char c){
+    public static boolean isEquals(char c) {
         return c == '=';
     }
 
     // -
-    public static boolean isMinus(char c){
+    public static boolean isMinus(char c) {
         return c == '-';
     }
 
     // +
-    public static boolean isPlus(char c){
+    public static boolean isPlus(char c) {
         return c == '+';
     }
 
     // *
-    public static boolean isMult(char c){
+    public static boolean isMult(char c) {
         return c == '*';
     }
 
@@ -139,8 +134,8 @@ public class Utils {
         return c == '!';
     }
 
-    public static boolean isOther(char c) {
-        return isNonConsumable(c) || isSpecialChar(c) || isAritmeticOperator(c) || isRelationalOperator(c);
+    public static boolean isSingleQuotes(char c) {
+        return c == '\'';
     }
 
 }

@@ -1,18 +1,12 @@
 package compiler;
 
-import compiler.model.Token;
-import compiler.scanner.LexicalScanner;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-
 public class ReadCodeTest {
 
-//    private static LexicalScanner lexicalScanner;
+//    private static Scanner lexicalScanner;
 //
 //    @BeforeAll
 //    static void initAll() {
-//        lexicalScanner = new LexicalScanner("somatorio.c");
+//        lexicalScanner = new Scanner("src/main/resources/examples/somatorio.c");
 //    }
 //
 //    @Test

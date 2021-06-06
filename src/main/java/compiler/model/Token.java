@@ -1,19 +1,29 @@
 package compiler.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiredArgsConstructor
 public class Token {
-    private TokenType type;
+    @NonNull
+    private Type type;
+    @NonNull
+    private TokenType tokenType;
+    @NonNull
     private String text;
+    private int line;
+    private int column;
 
     @Override
     public String toString() {
-        return type + " -> '" + text + "'";
+        return type + " [" + tokenType + "] -> " + text;
+    }
+
+
+    public String lineByColumn() {      // Line 3 and column 4 (3:4).
+        return "Line " + line + " and column " + column + " (" + line + ":" + column + ").";
     }
 
 }

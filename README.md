@@ -1,2 +1,3 @@
-# Lexical Analyzer
-Um simples analisador léxico feito em Java para a cadeira de Compiladores da Unicap 2021.1.
+# Compiler
+
+Um simples compilador feito em Java para a cadeira de Compiladores da Unicap 2021.1.
