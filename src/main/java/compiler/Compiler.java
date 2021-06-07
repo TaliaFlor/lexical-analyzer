@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 public class Compiler {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner("src/main/resources/examples/testes.c");
+        Scanner scanner = new Scanner("src/main/resources/examples/somatorio.c");
         Parser parser = new Parser(scanner);
         try {
             parser.main();

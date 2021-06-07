@@ -35,29 +35,21 @@ public class Parser implements Analyser {
     // ======= MAIN =======
 
     public void main() {
-        try {
-            validate._main();
-            validate.openParentesis();
-            validate.closeParentesis();
-            bloco();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
+        validate._main();
+        validate.openParentesis();
+        validate.closeParentesis();
+        bloco();
     }
 
     // ======= BLOCO =======
 
     public void bloco() {
-        try {
-            validate.openCurlyBracket();
-            while (validateConjFirst.comando())
-                comando(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-            if (!actualToken.isTokenFound()) {
-                validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                actualToken.resetTokenFoundMark();
-            }
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
+        validate.openCurlyBracket();
+        while (validateConjFirst.comando())
+            comando(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+        if (!actualToken.isTokenFound()) {
+            validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+            actualToken.resetTokenFoundMark();
         }
     }
 
@@ -70,19 +62,23 @@ public class Parser implements Analyser {
     public void comando(boolean nextToken) {
         actualToken.markTokenNotFound();
         try {
-            declaracao(nextToken);
+            declVar(nextToken);
         } catch (TokenExpectedException e) {
             try {
-                iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-            } catch (TokenExpectedException e1) {
+                acessoVar(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+            } catch (Exception e1) {
                 try {
-                    decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 } catch (TokenExpectedException e2) {
                     try {
-                        validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                        actualToken.markTokenFound();
+                        decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                     } catch (TokenExpectedException e3) {
-                        handler.handle("Command of type 'declaracao', 'iteracao' or 'decisao'; or token '}' expected!");
+                        try {
+                            validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                            actualToken.markTokenFound();
+                        } catch (TokenExpectedException e4) {
+                            handler.handle("Command of type 'declaracao', 'iteracao' or 'decisao'; or token '}' expected!");
+                        }
                     }
                 }
             }
@@ -91,90 +87,99 @@ public class Parser implements Analyser {
 
     // ======= TIPO =======
 
-    public void tipo() {
-        tipo(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public void tipoVar() {
+        tipoVar(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void tipo(boolean nextToken) {
-        try {
-            validateComposed.tipo(nextToken);
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
+    public void tipoVar(boolean nextToken) {
+        validateComposed.tipo(nextToken);
     }
 
-    // ======= DECLARAÇÃO =======
+    // ======= DECLARAÇÃO DE VARIÁVEL =======
 
-    public void declaracao() {
-        declaracao(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public void declVar() {
+        declVar(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void declaracao(boolean nextToken) {
-        try {
-            declaracaoAux(nextToken);
-            if (!actualToken.isTokenFound()) {
-                validate.identifier();
-                actualToken.resetTokenFoundMark();
-            }
-            atribuicao();
-            if (!actualToken.isTokenFound()) {
-                validate.semicolon();
-                actualToken.resetTokenFoundMark();
-            }
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
+    public void declVar(boolean nextToken) {
+        tipoVar(nextToken);
+        acessoVar();
     }
 
-    public void declaracaoAux() {
-        declaracaoAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public void declVarAux() {
+        declVarAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void declaracaoAux(boolean nextToken) {
+    public void declVarAux(boolean nextToken) {
         actualToken.markTokenNotFound();
         try {
-            tipo(nextToken);
-        } catch (TokenExpectedException e) {
-            try {
-                validate.identifier(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                actualToken.markTokenFound();
-            } catch (TokenExpectedException e1) {
-                handler.handle("Reserved word 'int', 'float' or 'char', or identifier expected!");
-            }
-        }
-    }
-
-    // ======= ATRIBUIÇÃO =======
-
-    public void atribuicao() {
-        actualToken.markTokenNotFound();
-        try {
-            validate.attribution();
-            expressaoRelacional();
+            initVar(nextToken);
         } catch (TokenExpectedException e) {
             try {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                handler.handle("Token '=' or ';' expected!");
+                handler.handle("Reserved word 'int', 'float' or 'char', identifier or token ';' expected!");
             }
         }
     }
 
-    // ======= FATOR =======
+    // ======= ACESSO DE VARIÁVEL =======
 
-    public void fator() {
-        fator(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public void acessoVar() {
+        acessoVar(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void fator(boolean nextToken) {
+    public void acessoVar(boolean nextToken) {
+        validate.identifier(nextToken);
+        declVarAux();
+        if (!actualToken.isTokenFound()) {
+            validate.semicolon();
+            actualToken.resetTokenFoundMark();
+        }
+    }
+
+    // ======= INICIALIZAÇÃO DE VARIÁVEL =======
+
+    public void initVar() {
+        initVar(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    public void initVar(boolean nextToken) {
+        validate.attribution(nextToken);
+        initVarAux();
+    }
+
+    public void initVarAux() {
+        initVarAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    public void initVarAux(boolean nextToken) {
         try {
-            validate.identifier(nextToken);
+            expArit(nextToken);
         } catch (TokenExpectedException e) {
             try {
-                validate.variableValues(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                validate.charactere(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                handler.handle("Identifier or variable value of type 'int', 'float' or 'char' expected!");
+                handler.handle("Variable value or aritmetic expression expected!");
+            }
+        }
+    }
+
+    // ======= VALOR NUMÉRICO =======
+
+    public void valorNum() {
+        valorNum(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    public void valorNum(boolean nextToken) {
+        try {
+            validate.integerNumber(nextToken);
+        } catch (TokenExpectedException e) {
+            try {
+                validate.realNumber(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+            } catch (TokenExpectedException e1) {
+                handler.handle("Number expected!");
             }
         }
     }
@@ -186,14 +191,10 @@ public class Parser implements Analyser {
     }
 
     public void decisao(boolean nextToken) {
-        try {
-            validate._if(nextToken);
-            condicao();
-            bloco();
-            _else();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
+        validate._if(nextToken);
+        condicao();
+        bloco();
+        _else();
     }
 
     public void _else() {
@@ -226,22 +227,11 @@ public class Parser implements Analyser {
     // ======= CONDIÇÃO =======
 
     public void condicao() {
-        try {
-            validate.openParentesis();
-            condicaoAux();
+        validate.openParentesis();
+        expRel();
+        if (!actualToken.isTokenFound()) {
             validate.closeParentesis();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
-    }
-
-    public void condicaoAux() {
-        try {
-            fator();
-            validate.relationalOperators();
-            fator();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
+            actualToken.resetTokenFoundMark();
         }
     }
 
@@ -272,13 +262,9 @@ public class Parser implements Analyser {
     }
 
     public void _while(boolean nextToken) {
-        try {
-            validate._while(nextToken);
-            condicao();
-            bloco();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
+        validate._while(nextToken);
+        condicao();
+        bloco();
     }
 
     public void doWhile() {
@@ -286,15 +272,11 @@ public class Parser implements Analyser {
     }
 
     public void doWhile(boolean nextToken) {
-        try {
-            validate._do(nextToken);
-            bloco();
-            validate._while();
-            condicao();
-            validate.semicolon();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
+        validate._do(nextToken);
+        bloco();
+        validate._while();
+        condicao();
+        validate.semicolon();
     }
 
     public void _for() {
@@ -302,87 +284,97 @@ public class Parser implements Analyser {
     }
 
     public void _for(boolean nextToken) {
-        try {
-            validate._for(nextToken);
-            validate.openParentesis();
-            declaracao();
-            condicaoAux();
-            if (!actualToken.isTokenFound()) {
-                validate.semicolon();
-                actualToken.resetTokenFoundMark();
-            }
-            counter();
-            validate.closeParentesis();
-            bloco();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
+        validate._for(nextToken);
+        validate.openParentesis();
+        declVar();
+        validate.semicolon();
+        expRel();
+        validate.semicolon();
+        expArit();
+        validate.closeParentesis();
+        bloco();
     }
 
-    public void counter() {
-        try {
-            validate.identifier();
-            counterAux();
-            validate.semicolon();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
+
+    // ======= EXPRESSÃO RELACIONAL =======
+
+    public void expRel() {
+        expRel(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void counterAux() {
+    public void expRel(boolean nextToken) {
+        valorVar(nextToken);
+        expRelAux();
+    }
+
+    public void valorVar() {
+        valorVar(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    private void valorVar(boolean nextToken) {
         try {
-            validateComposed.plusOrMinus();
-            counterAux2();
+            validate.identifier(nextToken);
         } catch (TokenExpectedException e) {
             try {
-                validate.attribution(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                validate.identifier();
-                validate.arithmeticOperators();
-                validate.integerNumber();
+                valorNum(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                handler.handle("Arithmetic operator '+', '-' or '=' expected!");
+                try {
+                    validate.charactere(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                } catch (TokenExpectedException e2) {
+                    handler.handle("Variable value or identifier expected!");
+                }
             }
         }
     }
 
-    public void counterAux2() {
+    public void expRelAux() {
+        expRelAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    }
+
+    public void expRelAux(boolean nextToken) {
+        actualToken.markTokenNotFound();
         try {
-            validateComposed.plusOrMinus();
+            validate.relationalOperators(nextToken);
+            expRel();
         } catch (TokenExpectedException e) {
             try {
-                validate.attribution(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                validate.integerNumber();
+                validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                actualToken.markTokenFound();
             } catch (TokenExpectedException e1) {
-                handler.handle("Arithmetic operator '+', '-' or '=' expected!");
+                try {
+                    validate.closeParentesis(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    actualToken.markTokenFound();
+                } catch (TokenExpectedException e2) {
+                    handler.handle("Relational operator, ';' or ')' expected!");
+                }
             }
         }
     }
+
 
     // ======= EXPRESSÃO ARITMÉTICA =======
 
-    public void expressaoAritmetica() {
-        expressaoAritmetica(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public void expArit() {
+        expArit(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void expressaoAritmetica(boolean nextToken) {
-        try {
-            termo(nextToken);
-            if (validateConjFirst.plusOrMinus(ActualToken.NEXT_TOKEN_FLAG_FALSE))
-                expressaoAritmeticaAux();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
+    public void expArit(boolean nextToken) {
+        termo(nextToken);
+        if (!actualToken.isTokenFound()) {
+            expAritAux();
+            actualToken.resetTokenFoundMark();
         }
     }
 
-    public void expressaoAritmeticaAux() {
-        expressaoAritmeticaAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public void expAritAux() {
+        expAritAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void expressaoAritmeticaAux(boolean nextToken) {
+    public void expAritAux(boolean nextToken) {
         actualToken.markTokenNotFound();
         try {
             validateComposed.plusOrMinus(nextToken);
-            expressaoAritmetica();
+            expArit();
         } catch (TokenExpectedException e) {
             try {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
@@ -403,12 +395,8 @@ public class Parser implements Analyser {
     }
 
     public void termo(boolean nextToken) {
-        try {
-            fator(nextToken);
-            termoAux();
-        } catch (TokenExpectedException e) {
-            handler.handle(e);
-        }
+        fator(nextToken);
+        termoAux();
     }
 
     public void termoAux() {
@@ -417,52 +405,33 @@ public class Parser implements Analyser {
             termo();
         } catch (TokenExpectedException e) {
             try {
-                expressaoAritmeticaAux(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                expAritAux(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
-                handler.handle("Arithmetic operator '*', '/', '+' or '-' expected!");
+                handler.handle("Arithmetic operator '*', '/', '+' or '-'; or token ';' or ')' expected!");
             }
         }
     }
 
-    // ======= EXPRESSÃO RELACIONAL =======
+    // ======= FATOR =======
 
-    public void expressaoRelacional() {
-        expressaoRelacional(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public void fator() {
+        fator(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void expressaoRelacional(boolean nextToken) {
+    public void fator(boolean nextToken) {
         try {
-            expressaoAritmetica(nextToken);
-            expressaoRelacionalAux();
+            validate.openParentesis(nextToken);
+            expArit();
+            validate.closeParentesis();
         } catch (TokenExpectedException e) {
             try {
-                expressaoRelacionalAux(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                validate.identifier(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
                 try {
-                    validate.relationalOperators(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                    expressaoRelacional();
+                    valorNum(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 } catch (TokenExpectedException e2) {
-                    handler.handle("Identifier; or variable value of type 'int', 'float' or 'char'; or relational operator expected!");
+                    handler.handle("Identifier or variable value of type 'int', 'float' or 'char' expected!");
                 }
-            }
-        }
-    }
-
-    public void expressaoRelacionalAux() {
-        expressaoRelacionalAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
-    }
-
-    public void expressaoRelacionalAux(boolean nextToken) {
-        actualToken.markTokenNotFound();
-        try {
-            validate.relationalOperators(nextToken);
-            expressaoAritmetica();
-        } catch (TokenExpectedException e) {
-            try {
-                validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                actualToken.markTokenFound();
-            } catch (TokenExpectedException e1) {
-                handler.handle("Relational operation or ';' expected!");
             }
         }
     }
