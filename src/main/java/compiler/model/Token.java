@@ -12,13 +12,13 @@ public class Token {
     @NonNull
     private TokenType tokenType;
     @NonNull
-    private String text;
+    private String value;
     private int line;
     private int column;
 
     @Override
     public String toString() {
-        return type + " [" + tokenType + "] -> " + text;
+        return type + " [" + tokenType + "] -> " + value;
     }
 
 

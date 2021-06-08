@@ -2,19 +2,22 @@ package compiler.parser;
 
 import compiler.component.ExceptionHandler;
 import compiler.interfaces.Analyser;
+import compiler.model.TokenType;
 import compiler.parser.exception.TokenExpectedException;
 import compiler.parser.model.ActualToken;
 import compiler.parser.validation.ComposedValidation;
 import compiler.parser.validation.ConjuntoFirstValidation;
 import compiler.parser.validation.TokenValidation;
 import compiler.scanner.Scanner;
+import compiler.semanticanalyzer.SemanticAnalyzer;
 
 public class Parser implements Analyser {
-    public final TokenValidation validate;
-    public final ConjuntoFirstValidation validateConjFirst;
-    public final ComposedValidation validateComposed;
-    public final ExceptionHandler handler;
-    public final ActualToken actualToken;
+    private final TokenValidation validate;
+    private final ConjuntoFirstValidation validateConjFirst;
+    private final ComposedValidation validateComposed;
+    private final ExceptionHandler handler;
+    private final ActualToken actualToken;
+    private final SemanticAnalyzer semanticAnalyzer;
 
 
     public Parser(Scanner scanner) {
@@ -23,6 +26,7 @@ public class Parser implements Analyser {
         validateConjFirst = new ConjuntoFirstValidation();
         validateComposed = new ComposedValidation();
         handler = new ExceptionHandler();
+        semanticAnalyzer = new SemanticAnalyzer();
     }
 
 
@@ -45,12 +49,17 @@ public class Parser implements Analyser {
 
     public void bloco() {
         validate.openCurlyBracket();
+
+        semanticAnalyzer.incrementScope();
+
         while (validateConjFirst.comando())
             comando(ActualToken.NEXT_TOKEN_FLAG_FALSE);
         if (!actualToken.isTokenFound()) {
             validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             actualToken.resetTokenFoundMark();
         }
+
+        semanticAnalyzer.decrementScope();
     }
 
     // ======= COMANDO =======
@@ -92,7 +101,12 @@ public class Parser implements Analyser {
     }
 
     public void tipoVar(boolean nextToken) {
-        validateComposed.tipo(nextToken);
+        try {
+            validateComposed.tipo(nextToken);
+            semanticAnalyzer.setType(actualToken.getTokenType());
+        } catch (TokenExpectedException e) {
+            throw new TokenExpectedException("Reserved word 'int', 'float' or 'char' expected.");
+        }
     }
 
     // ======= DECLARAÇÃO DE VARIÁVEL =======
@@ -103,7 +117,12 @@ public class Parser implements Analyser {
 
     public void declVar(boolean nextToken) {
         tipoVar(nextToken);
+
+        semanticAnalyzer.selectCreateNewVariable();
+
         acessoVar();
+
+        semanticAnalyzer.deselectCreateNewVariable();
     }
 
     public void declVarAux() {
@@ -132,6 +151,10 @@ public class Parser implements Analyser {
 
     public void acessoVar(boolean nextToken) {
         validate.identifier(nextToken);
+
+        semanticAnalyzer.setName(actualToken.getToken().getValue());
+        semanticAnalyzer.verifyVariable();
+
         declVarAux();
         if (!actualToken.isTokenFound()) {
             validate.semicolon();
@@ -160,6 +183,7 @@ public class Parser implements Analyser {
         } catch (TokenExpectedException e) {
             try {
                 validate.charactere(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                semanticAnalyzer.setValue(actualToken.getToken().getValue());
             } catch (TokenExpectedException e1) {
                 handler.handle("Variable value or aritmetic expression expected!");
             }
@@ -175,9 +199,11 @@ public class Parser implements Analyser {
     public void valorNum(boolean nextToken) {
         try {
             validate.integerNumber(nextToken);
+            semanticAnalyzer.setValue(actualToken.getToken().getValue());
         } catch (TokenExpectedException e) {
             try {
                 validate.realNumber(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                semanticAnalyzer.setValue(actualToken.getToken().getValue());
             } catch (TokenExpectedException e1) {
                 handler.handle("Number expected!");
             }
@@ -314,12 +340,15 @@ public class Parser implements Analyser {
     private void valorVar(boolean nextToken) {
         try {
             validate.identifier(nextToken);
+            semanticAnalyzer.setValue(actualToken.getToken().getValue(), true);
         } catch (TokenExpectedException e) {
             try {
                 valorNum(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                semanticAnalyzer.setValue(actualToken.getToken().getValue());
             } catch (TokenExpectedException e1) {
                 try {
                     validate.charactere(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    semanticAnalyzer.setValue(actualToken.getToken().getValue());
                 } catch (TokenExpectedException e2) {
                     handler.handle("Variable value or identifier expected!");
                 }
