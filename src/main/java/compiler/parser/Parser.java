@@ -19,6 +19,10 @@ public class Parser implements Analyser {
     private final ActualToken actualToken;
     private final SemanticAnalyzer semanticAnalyzer;
 
+    private double num1;
+    private double num2;
+    private double value;
+
 
     public Parser(Scanner scanner) {
         actualToken = ActualToken.getInstance(scanner);
@@ -153,7 +157,6 @@ public class Parser implements Analyser {
         validate.identifier(nextToken);
 
         semanticAnalyzer.setName(actualToken.getToken().getValue());
-        semanticAnalyzer.verifyVariable();
 
         declVarAux();
         if (!actualToken.isTokenFound()) {
@@ -179,7 +182,8 @@ public class Parser implements Analyser {
 
     public void initVarAux(boolean nextToken) {
         try {
-            expArit(nextToken);
+            double value = expArit(nextToken);
+            semanticAnalyzer.setValue(value);
         } catch (TokenExpectedException e) {
             try {
                 validate.charactere(ActualToken.NEXT_TOKEN_FLAG_FALSE);
@@ -192,22 +196,24 @@ public class Parser implements Analyser {
 
     // ======= VALOR NUMÉRICO =======
 
-    public void valorNum() {
-        valorNum(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public double valorNum() {
+        return valorNum(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void valorNum(boolean nextToken) {
+    public double valorNum(boolean nextToken) {
+        double value = 0;
         try {
             validate.integerNumber(nextToken);
-            semanticAnalyzer.setValue(actualToken.getToken().getValue());
+            value = Integer.parseInt(actualToken.getToken().getValue());
         } catch (TokenExpectedException e) {
             try {
                 validate.realNumber(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                semanticAnalyzer.setValue(actualToken.getToken().getValue());
+                value = Double.parseDouble(actualToken.getToken().getValue());
             } catch (TokenExpectedException e1) {
                 handler.handle("Number expected!");
             }
         }
+        return value;
     }
 
     // ======= DECISÃO =======
@@ -316,7 +322,10 @@ public class Parser implements Analyser {
         validate.semicolon();
         expRel();
         validate.semicolon();
-        expArit();
+
+        double value = expArit();
+        semanticAnalyzer.setValue(value);
+
         validate.closeParentesis();
         bloco();
     }
@@ -340,7 +349,7 @@ public class Parser implements Analyser {
     private void valorVar(boolean nextToken) {
         try {
             validate.identifier(nextToken);
-            semanticAnalyzer.setValue(actualToken.getToken().getValue(), true);
+            semanticAnalyzer.setValue(actualToken.getToken().getValue());
         } catch (TokenExpectedException e) {
             try {
                 valorNum(ActualToken.NEXT_TOKEN_FLAG_FALSE);
@@ -383,86 +392,114 @@ public class Parser implements Analyser {
 
     // ======= EXPRESSÃO ARITMÉTICA =======
 
-    public void expArit() {
-        expArit(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public double expArit() {
+        return expArit(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void expArit(boolean nextToken) {
-        termo(nextToken);
+    public double expArit(boolean nextToken) {
+        Double result = null;
+        double num1 = termo(nextToken);
         if (!actualToken.isTokenFound()) {
-            expAritAux();
+            result = expAritAux(num1);
             actualToken.resetTokenFoundMark();
         }
+        return result != null ? result : num1;
     }
 
-    public void expAritAux() {
-        expAritAux(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public double expAritAux() {
+       return expAritAux(ActualToken.NEXT_TOKEN_FLAG_TRUE, null);
     }
 
-    public void expAritAux(boolean nextToken) {
+    public double expAritAux(double num1) {
+        return expAritAux(ActualToken.NEXT_TOKEN_FLAG_TRUE, num1);
+    }
+
+    public double expAritAux(boolean nextToken, Double num1) {
+        double result = 0;
         actualToken.markTokenNotFound();
         try {
             validateComposed.plusOrMinus(nextToken);
-            expArit();
+            boolean isSum = actualToken.getTokenType() == TokenType.PLUS;
+
+            double num2 = expArit();
+            if (isSum)
+                result = num1 + num2;
+            else
+                result = num1 - num2;
         } catch (TokenExpectedException e) {
             try {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 actualToken.markTokenFound();
+                result = num1;
             } catch (TokenExpectedException e1) {
                 try {
                     validate.closeParentesis(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                     actualToken.markTokenFound();
+                    result = num1;
                 } catch (TokenExpectedException e2) {
                     handler.handle("Arithmetic operator '+' or '-'; or special character ';' or ')' expected!");
                 }
             }
         }
+        return result;
     }
 
-    public void termo() {
-        termo(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public double termo() {
+        return termo(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void termo(boolean nextToken) {
-        fator(nextToken);
-        termoAux();
+    public double termo(boolean nextToken) {
+        double num1 = fator(nextToken);
+        double result = termoAux(num1);
+        return result;
     }
 
-    public void termoAux() {
+    public double termoAux(double num1) {
+        double result = 0;
         try {
             validateComposed.multOrDiv();
-            termo();
+            boolean isMult = actualToken.getTokenType() == TokenType.MULTIPLICATION;
+
+            double num2 = termo();
+            if (isMult)
+                result = num1 * num2;
+            else
+                result = num1 / num2;
         } catch (TokenExpectedException e) {
             try {
-                expAritAux(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                result = expAritAux(ActualToken.NEXT_TOKEN_FLAG_FALSE, num1);
             } catch (TokenExpectedException e1) {
                 handler.handle("Arithmetic operator '*', '/', '+' or '-'; or token ';' or ')' expected!");
             }
         }
+        return result;
     }
 
     // ======= FATOR =======
 
-    public void fator() {
-        fator(ActualToken.NEXT_TOKEN_FLAG_TRUE);
+    public double fator() {
+        return fator(ActualToken.NEXT_TOKEN_FLAG_TRUE);
     }
 
-    public void fator(boolean nextToken) {
+    public double fator(boolean nextToken) {
+        double num1 = 0;
         try {
             validate.openParentesis(nextToken);
-            expArit();
+            num1 = expArit();
             validate.closeParentesis();
         } catch (TokenExpectedException e) {
             try {
                 validate.identifier(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                num1 = semanticAnalyzer.getValue(actualToken.getToken().getValue());
             } catch (TokenExpectedException e1) {
                 try {
-                    valorNum(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    num1 = valorNum(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 } catch (TokenExpectedException e2) {
                     handler.handle("Identifier or variable value of type 'int', 'float' or 'char' expected!");
                 }
             }
         }
+        return num1;
     }
 
 }

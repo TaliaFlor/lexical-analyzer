@@ -7,14 +7,20 @@ import lombok.Setter;
 @Getter
 @Setter
 public class Variable extends Symbol {
-    private TokenType type;
+    private final TokenType type;
     private Object value;
+
+
+    public Variable(int scope, TokenType type, String name) {
+        this(scope, type, name, null);
+    }
 
     public Variable(int scope, TokenType type, String name, Object value) {
         super(scope, name);
         this.type = type;
         this.value = value;
     }
+
 
     @Override
     public String toString() {

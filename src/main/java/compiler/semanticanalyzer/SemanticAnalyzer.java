@@ -6,21 +6,16 @@ import compiler.parser.model.ActualToken;
 import compiler.semanticanalyzer.datastructures.Symbol;
 import compiler.semanticanalyzer.datastructures.SymbolTable;
 import compiler.semanticanalyzer.datastructures.Variable;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SemanticAnalyzer {
     private final SymbolTable symbolTable = new SymbolTable();
 
-    
     private final ActualToken actualToken;
     private int scope;
     private TokenType type;
-    @Setter
     private String name;
-    private Object value;
-    private Symbol symbol;
     private boolean createNewVariable;
 
 
@@ -54,19 +49,6 @@ public class SemanticAnalyzer {
         this.type = type;
     }
 
-    public void setValue(Object value) {
-        setValue(value, false);
-    }
-
-    public void setValue(Object value, boolean isFromVariable) {
-        if (isFromVariable) {
-            verifyVariableIsDeclared();
-            this.value = ((Variable) symbolTable.get(name)).getValue();
-        } else {
-            this.value = value;
-        }
-    }
-
     public void verifyVariable() {
         if (createNewVariable)
             createNewVariable();
@@ -77,9 +59,31 @@ public class SemanticAnalyzer {
     public void createNewVariable() {
         if (symbolTable.existsInTheSameOrBiggerScope(scope, name))
             throw new SemanticException("Variable '" + name + "' alredy declared in the same or bigger scope.");
-        Symbol symbol = new Variable(scope, type, name, value);
+        Symbol symbol = new Variable(scope, type, name);
         symbolTable.add(symbol);
-        log.trace(symbol.toString());
+    }
+
+    public void setName(String name) {
+        this.name = name;
+        verifyVariable();
+    }
+
+    public double getValue(String name) {
+        verifyVariableIsDeclared();
+        return (double) getVariable(name).getValue();
+    }
+
+    public void setValue(Object value) {
+        verifyVariableIsDeclared();
+        if (getVariable(name).getValue() != null)
+            return;
+
+        getVariable(name).setValue(value);
+        log.trace(String.valueOf(getVariable(name)));
+    }
+
+    public Variable getVariable(String name) {
+        return (Variable) symbolTable.get(name);
     }
 
     public void verifyVariableIsDeclared() {

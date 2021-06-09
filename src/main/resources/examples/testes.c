@@ -1,4 +1,4 @@
 main() {
-    int soma;
-    soma = 2;
+    int i = 4;
+    int soma = i;
 }
