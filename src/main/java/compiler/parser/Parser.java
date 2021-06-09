@@ -75,7 +75,7 @@ public class Parser implements Analyser {
         } catch (TokenExpectedException e) {
             try {
                 acessoVar(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-            } catch (Exception e1) {
+            } catch (TokenExpectedException e1) {
                 try {
                     iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 } catch (TokenExpectedException e2) {
@@ -276,7 +276,7 @@ public class Parser implements Analyser {
             } catch (TokenExpectedException e1) {
                 try {
                     _for(ActualToken.NEXT_TOKEN_FLAG_FALSE);
-                } catch (Exception e2) {
+                } catch (TokenExpectedException e2) {
                     handler.handle("Command of type 'while', 'do-while' or 'for' expected!");
                 }
             }

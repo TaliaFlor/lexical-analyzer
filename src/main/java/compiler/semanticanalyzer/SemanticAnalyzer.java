@@ -2,27 +2,33 @@ package compiler.semanticanalyzer;
 
 import compiler.exception.SemanticException;
 import compiler.model.TokenType;
+import compiler.parser.model.ActualToken;
 import compiler.semanticanalyzer.datastructures.Symbol;
 import compiler.semanticanalyzer.datastructures.SymbolTable;
 import compiler.semanticanalyzer.datastructures.Variable;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class SemanticAnalyzer {
     private final SymbolTable symbolTable = new SymbolTable();
 
+    
+    private final ActualToken actualToken;
     private int scope;
     private TokenType type;
     @Setter
     private String name;
     private Object value;
     private Symbol symbol;
-
     private boolean createNewVariable;
 
 
     public SemanticAnalyzer() {
         scope = 0;
         createNewVariable = false;
+
+        actualToken = ActualToken.getInstance();
     }
 
 
@@ -69,17 +75,16 @@ public class SemanticAnalyzer {
     }
 
     public void createNewVariable() {
-        if (symbolTable.existsInTheSameOrBiggerScope(scope, name)) {
+        if (symbolTable.existsInTheSameOrBiggerScope(scope, name))
             throw new SemanticException("Variable '" + name + "' alredy declared in the same or bigger scope.");
-        }
         Symbol symbol = new Variable(scope, type, name, value);
         symbolTable.add(symbol);
+        log.trace(symbol.toString());
     }
 
     public void verifyVariableIsDeclared() {
-        if (!symbolTable.existsInTheSameOrBiggerScope(scope, name)) {
-            throw new SemanticException("Variable '" + name + "' not declared");
-        }
+        if (!symbolTable.existsInTheSameOrBiggerScope(scope, name))
+            throw new SemanticException("Variable '" + name + "' not declared. " + actualToken.getToken().lineByColumn());
     }
 
 }

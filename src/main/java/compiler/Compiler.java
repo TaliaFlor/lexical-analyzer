@@ -17,7 +17,7 @@ public class Compiler {
         try {
             parser.main();
             log.info("Parsing finished with success! No errors on input file");
-        } catch (TokenExpectedException e) {
+        } catch (Exception e) {
             log.error(e.getMessage());
         }
     }

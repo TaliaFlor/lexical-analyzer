@@ -3,11 +3,9 @@ package compiler.semanticanalyzer.datastructures;
 import compiler.model.TokenType;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 @Getter
 @Setter
-@ToString
 public class Variable extends Symbol {
     private TokenType type;
     private Object value;
@@ -16,5 +14,15 @@ public class Variable extends Symbol {
         super(scope, name);
         this.type = type;
         this.value = value;
+    }
+
+    @Override
+    public String toString() {
+        return "Variable{" +
+                "scope=" + scope +
+                ", type=" + type +
+                ", name='" + name + '\'' +
+                ", value=" + value +
+                '}';
     }
 }
