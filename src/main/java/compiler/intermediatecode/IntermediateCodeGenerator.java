@@ -7,6 +7,9 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.joining;
 
 @Slf4j
 public class IntermediateCodeGenerator {
@@ -31,9 +34,11 @@ public class IntermediateCodeGenerator {
     }
 
     public void printCommands() {
-        System.out.println("\n----------------------------");
-        System.out.println(String.join("\n", commands));
-        System.out.println("----------------------------\n");
+        if (!commands.isEmpty()) {
+            System.out.println("\n----------------------------");
+            System.out.println(String.join("\n", commands));
+            System.out.println("----------------------------\n");
+        }
     }
 
     public void addTermo(String termo) {
@@ -54,7 +59,7 @@ public class IntermediateCodeGenerator {
     }
 
     private void asignFinalValueToIdentifier() {
-        if (identifier != null && !identifier.isEmpty())
+        if (!termos.isEmpty() && identifier != null && !identifier.isEmpty())
             commands.add(String.format("%s = %s", identifier, termos.get(termos.size() - 1)));
     }
 
