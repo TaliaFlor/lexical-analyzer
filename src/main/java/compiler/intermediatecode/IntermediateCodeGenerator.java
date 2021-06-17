@@ -7,9 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.joining;
 
 @Slf4j
 public class IntermediateCodeGenerator {
@@ -19,10 +16,10 @@ public class IntermediateCodeGenerator {
     @Setter
     private String identifier;
     private int counter = 0;
-    @Setter
-    private String finalValue;
+    private String condicao;
 
-    public void generate(TokenType operator) {
+
+    public void generateAritmeticOperation(TokenType operator) {
         String lastTerm = termos.pop();
         String penultimateTerm = termos.pop();
 
@@ -30,7 +27,6 @@ public class IntermediateCodeGenerator {
 
         addTermo("t" + counter);
         incrementCounter();
-        setFinalValue(penultimateTerm);
     }
 
     public void printCommands() {
@@ -47,20 +43,33 @@ public class IntermediateCodeGenerator {
         termos.push(termo);
     }
 
+    public void addTokenCondicao(String token) {
+        condicao += " " + token;
+    }
+
     public void incrementCounter() {
         counter++;
     }
 
     public void reset() {
-        asignFinalValueToIdentifier();
+        generateAttribution();
         termos.clear();
         counter = 0;
         identifier = "";
+        condicao = "";
     }
 
-    private void asignFinalValueToIdentifier() {
+    private void generateAttribution() {
         if (!termos.isEmpty() && identifier != null && !identifier.isEmpty())
             commands.add(String.format("%s = %s", identifier, termos.get(termos.size() - 1)));
+    }
+
+    public void generateWhile() {
+        commands.add(String.format("while%s do", condicao));
+    }
+
+    public void endWhile() {
+        commands.add("endwhile");
     }
 
 }

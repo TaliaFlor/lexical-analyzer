@@ -84,6 +84,7 @@ public class SemanticAnalyzer {
         if (getVariable(name).getValue() != null)
             return;
 
+
         getVariable(name).setValue(value);
         log.trace(String.valueOf(getVariable(name)));
     }

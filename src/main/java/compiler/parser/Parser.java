@@ -301,7 +301,9 @@ public class Parser implements Analyser {
     public void _while(boolean nextToken) {
         validate._while(nextToken);
         condicao();
+        codeGenerator.generateWhile();
         bloco();
+        codeGenerator.endWhile();
     }
 
     public void doWhile() {
@@ -368,6 +370,7 @@ public class Parser implements Analyser {
                 }
             }
         }
+        codeGenerator.addTokenCondicao(actualToken.getToken().getValue());
     }
 
     public void expRelAux() {
@@ -378,6 +381,7 @@ public class Parser implements Analyser {
         actualToken.markTokenNotFound();
         try {
             validate.relationalOperators(nextToken);
+            codeGenerator.addTokenCondicao(actualToken.getToken().getValue());
             expRel();
         } catch (TokenExpectedException e) {
             try {
@@ -436,7 +440,7 @@ public class Parser implements Analyser {
                 operator = TokenType.MINUS;
             }
 
-            codeGenerator.generate(operator);
+            codeGenerator.generateAritmeticOperation(operator);
         } catch (TokenExpectedException e) {
             try {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
@@ -480,7 +484,7 @@ public class Parser implements Analyser {
                 operator = TokenType.DIVISION;
             }
 
-            codeGenerator.generate(operator);
+            codeGenerator.generateAritmeticOperation(operator);
         } catch (TokenExpectedException e) {
             try {
                 result = expAritAux(ActualToken.NEXT_TOKEN_FLAG_FALSE, num1);

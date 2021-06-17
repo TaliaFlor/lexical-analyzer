@@ -1,5 +1,12 @@
 main() {
     int i = 5;
-    int soma = i * 3 / 2;
-    float x = 4 + 1 - 7;
+    float soma = i * 3 + 4;
+
+    int x = 0;
+    while(x < 10) {
+        x = x + 1;
+    }
+
+    int num = 8;
 }
+

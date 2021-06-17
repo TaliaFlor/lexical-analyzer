@@ -18,6 +18,7 @@ public class Compiler {
             log.info("Compiling finished with success! No errors on input file");
         } catch (Exception e) {
             log.error(e.getMessage());
+            e.printStackTrace();
         }
     }
 
