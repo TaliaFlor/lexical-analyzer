@@ -2,6 +2,7 @@ package compiler.parser;
 
 import compiler.component.ExceptionHandler;
 import compiler.interfaces.Analyser;
+import compiler.intermediatecode.IntermediateCodeGenerator;
 import compiler.model.TokenType;
 import compiler.parser.exception.TokenExpectedException;
 import compiler.parser.model.ActualToken;
@@ -18,10 +19,9 @@ public class Parser implements Analyser {
     private final ExceptionHandler handler;
     private final ActualToken actualToken;
     private final SemanticAnalyzer semanticAnalyzer;
+    private final IntermediateCodeGenerator codeGenerator;
 
-    private double num1;
-    private double num2;
-    private double value;
+    private String identifier;
 
 
     public Parser(Scanner scanner) {
@@ -30,7 +30,8 @@ public class Parser implements Analyser {
         validateConjFirst = new ConjuntoFirstValidation();
         validateComposed = new ComposedValidation();
         handler = new ExceptionHandler();
-        semanticAnalyzer = new SemanticAnalyzer();
+        semanticAnalyzer = SemanticAnalyzer.getInstance();
+        codeGenerator = new IntermediateCodeGenerator();
     }
 
 
@@ -47,6 +48,8 @@ public class Parser implements Analyser {
         validate.openParentesis();
         validate.closeParentesis();
         bloco();
+
+        codeGenerator.printCommands();
     }
 
     // ======= BLOCO =======
@@ -96,6 +99,7 @@ public class Parser implements Analyser {
                 }
             }
         }
+        codeGenerator.reset();
     }
 
     // ======= TIPO =======
@@ -157,6 +161,7 @@ public class Parser implements Analyser {
         validate.identifier(nextToken);
 
         semanticAnalyzer.setName(actualToken.getToken().getValue());
+        codeGenerator.setIdentifier(actualToken.getToken().getValue());
 
         declVarAux();
         if (!actualToken.isTokenFound()) {
@@ -407,7 +412,7 @@ public class Parser implements Analyser {
     }
 
     public double expAritAux() {
-       return expAritAux(ActualToken.NEXT_TOKEN_FLAG_TRUE, null);
+        return expAritAux(ActualToken.NEXT_TOKEN_FLAG_TRUE, null);
     }
 
     public double expAritAux(double num1) {
@@ -421,11 +426,17 @@ public class Parser implements Analyser {
             validateComposed.plusOrMinus(nextToken);
             boolean isSum = actualToken.getTokenType() == TokenType.PLUS;
 
+            TokenType operator;
             double num2 = expArit();
-            if (isSum)
+            if (isSum) {
                 result = num1 + num2;
-            else
+                operator = TokenType.PLUS;
+            } else {
                 result = num1 - num2;
+                operator = TokenType.MINUS;
+            }
+
+            codeGenerator.generate(operator);
         } catch (TokenExpectedException e) {
             try {
                 validate.semicolon(ActualToken.NEXT_TOKEN_FLAG_FALSE);
@@ -450,8 +461,7 @@ public class Parser implements Analyser {
 
     public double termo(boolean nextToken) {
         double num1 = fator(nextToken);
-        double result = termoAux(num1);
-        return result;
+        return termoAux(num1);
     }
 
     public double termoAux(double num1) {
@@ -460,11 +470,17 @@ public class Parser implements Analyser {
             validateComposed.multOrDiv();
             boolean isMult = actualToken.getTokenType() == TokenType.MULTIPLICATION;
 
+            TokenType operator;
             double num2 = termo();
-            if (isMult)
+            if (isMult) {
                 result = num1 * num2;
-            else
+                operator = TokenType.MULTIPLICATION;
+            } else {
                 result = num1 / num2;
+                operator = TokenType.DIVISION;
+            }
+
+            codeGenerator.generate(operator);
         } catch (TokenExpectedException e) {
             try {
                 result = expAritAux(ActualToken.NEXT_TOKEN_FLAG_FALSE, num1);
@@ -483,6 +499,7 @@ public class Parser implements Analyser {
 
     public double fator(boolean nextToken) {
         double num1 = 0;
+        String identifier = "";
         try {
             validate.openParentesis(nextToken);
             num1 = expArit();
@@ -491,14 +508,18 @@ public class Parser implements Analyser {
             try {
                 validate.identifier(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 num1 = semanticAnalyzer.getValue(actualToken.getToken().getValue());
+                identifier = actualToken.getToken().getValue();
             } catch (TokenExpectedException e1) {
                 try {
                     num1 = valorNum(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    identifier = String.valueOf(num1);
                 } catch (TokenExpectedException e2) {
                     handler.handle("Identifier or variable value of type 'int', 'float' or 'char' expected!");
                 }
             }
         }
+
+        codeGenerator.addTermo(identifier);
         return num1;
     }
 

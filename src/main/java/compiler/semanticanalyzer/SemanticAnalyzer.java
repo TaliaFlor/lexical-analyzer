@@ -10,8 +10,8 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SemanticAnalyzer {
+    private static SemanticAnalyzer instance = null;
     private final SymbolTable symbolTable = new SymbolTable();
-
     private final ActualToken actualToken;
     private int scope;
     private TokenType type;
@@ -19,11 +19,17 @@ public class SemanticAnalyzer {
     private boolean createNewVariable;
 
 
-    public SemanticAnalyzer() {
+    private SemanticAnalyzer() {
         scope = 0;
         createNewVariable = false;
 
         actualToken = ActualToken.getInstance();
+    }
+
+    public static SemanticAnalyzer getInstance() {
+        if (instance == null)
+            instance = new SemanticAnalyzer();
+        return instance;
     }
 
 

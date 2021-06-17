@@ -43,7 +43,6 @@ public class ActualToken {
         try {
             if (nextToken) {
                 token = scanner.nextToken();
-//                System.out.println(token);
             }
         } catch (ArrayIndexOutOfBoundsException e) {
             log.info("End of file");

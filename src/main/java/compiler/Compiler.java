@@ -15,7 +15,7 @@ public class Compiler {
         Parser parser = new Parser(scanner);
         try {
             parser.main();
-            log.info("Parsing finished with success! No errors on input file");
+            log.info("Compiling finished with success! No errors on input file");
         } catch (Exception e) {
             log.error(e.getMessage());
         }

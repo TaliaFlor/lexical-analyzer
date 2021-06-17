@@ -5,7 +5,7 @@
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <useJansi>true</useJansi>
         <encoder>
-            <pattern>%highlight(%d{yyyy-MM-dd} | %d{HH:mm:ss.SSS} | %-5.5thread | %-5p | %-20.20logger{19} | %m%n)
+            <pattern>%highlight(%d{yyyy-MM-dd} | %d{HH:mm:ss.SSS} | %-5.5thread | %-5p | %-30.30logger{29} | %m%n)
             </pattern>
             <charset>utf8</charset>
         </encoder>
