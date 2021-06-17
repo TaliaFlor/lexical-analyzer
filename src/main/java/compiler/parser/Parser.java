@@ -84,10 +84,10 @@ public class Parser implements Analyser {
                 acessoVar(ActualToken.NEXT_TOKEN_FLAG_FALSE);
             } catch (TokenExpectedException e1) {
                 try {
-                    iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                    decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                 } catch (TokenExpectedException e2) {
                     try {
-                        decisao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
+                        iteracao(ActualToken.NEXT_TOKEN_FLAG_FALSE);
                     } catch (TokenExpectedException e3) {
                         try {
                             validate.closeCurlyBracket(ActualToken.NEXT_TOKEN_FLAG_FALSE);
@@ -251,10 +251,10 @@ public class Parser implements Analyser {
 
     public void elseAux() {
         try {
-            decisao();
+            bloco();
         } catch (TokenExpectedException e) {
             try {
-                bloco();
+                decisao();
             } catch (TokenExpectedException e1) {
                 handler.handle("Command of type 'decisão' or 'bloco' expected!");
             }

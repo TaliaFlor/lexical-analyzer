@@ -18,7 +18,7 @@ public class SymbolTable {
     }
 
     private boolean scopeIsTheSameOrBigger(int scope, String symbolName) {
-        return get(symbolName).getScope() >= scope;
+        return scope >= get(symbolName).getScope();
     }
 
     public boolean exists(String symbolName) {
