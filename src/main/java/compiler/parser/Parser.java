@@ -303,6 +303,7 @@ public class Parser implements Analyser {
         condicao();
         codeGenerator.generateWhile();
         bloco();
+        codeGenerator.addGotoWhile();
         codeGenerator.endWhile();
     }
 
@@ -381,7 +382,7 @@ public class Parser implements Analyser {
         actualToken.markTokenNotFound();
         try {
             validate.relationalOperators(nextToken);
-            codeGenerator.addTokenCondicao(actualToken.getToken().getValue());
+            codeGenerator.addTokenCondicao(actualToken.getToken().getValue(), true);
             expRel();
         } catch (TokenExpectedException e) {
             try {

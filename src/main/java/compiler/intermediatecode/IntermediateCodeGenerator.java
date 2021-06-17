@@ -44,7 +44,32 @@ public class IntermediateCodeGenerator {
     }
 
     public void addTokenCondicao(String token) {
+        addTokenCondicao(token, false);
+    }
+
+    public void addTokenCondicao(String token, boolean isRelationalOperator) {
+        if (isRelationalOperator)
+            token = invertOperation(token);
         condicao += " " + token;
+    }
+
+    public String invertOperation(String operator) {
+        switch (operator) {
+            case "<":
+                return ">=";
+            case ">":
+                return "<=";
+            case "<=":
+                return ">";
+            case ">=":
+                return "<";
+            case "==":
+                return "!=";
+            case "!=":
+                return "==";
+            default:
+                return operator;
+        }
     }
 
     public void incrementCounter() {
@@ -65,11 +90,15 @@ public class IntermediateCodeGenerator {
     }
 
     public void generateWhile() {
-        commands.add(String.format("while%s do", condicao));
+        commands.add(String.format("L1: if%s goto L2", condicao));
+    }
+
+    public void addGotoWhile(){
+        commands.add("goto L1");
     }
 
     public void endWhile() {
-        commands.add("endwhile");
+        commands.add("L2: ");
     }
 
 }
