@@ -75,7 +75,7 @@ public class SemanticAnalyzer {
     }
 
     public double getValue(String name) {
-        verifyVariableIsDeclared();
+        verifyVariableIsDeclared(name);
         return (double) getVariable(name).getValue();
     }
 
@@ -83,7 +83,6 @@ public class SemanticAnalyzer {
         verifyVariableIsDeclared();
         if (getVariable(name).getValue() != null)
             return;
-
 
         getVariable(name).setValue(value);
         log.trace(String.valueOf(getVariable(name)));
@@ -94,6 +93,10 @@ public class SemanticAnalyzer {
     }
 
     public void verifyVariableIsDeclared() {
+        verifyVariableIsDeclared(name);
+    }
+
+    public void verifyVariableIsDeclared(String name) {
         if (!symbolTable.existsInTheSameOrBiggerScope(scope, name))
             throw new SemanticException("Variable '" + name + "' not declared. " + actualToken.getToken().lineByColumn());
     }

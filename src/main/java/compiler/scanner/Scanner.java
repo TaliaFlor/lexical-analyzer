@@ -148,7 +148,7 @@ public class Scanner {   //TODO adicionar linha (/r) e coluna (cada caracter lid
                 else if (isEOF(c))
                     return null;
                 else
-                    throw new UnrecognizedTokenException("Unrecognized symbol - '" + (scanned + c) + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
+                    throw new UnrecognizedTokenException("Unrecognized symbol - '" + scanned + "'. Linha " + line + " e coluna " + (column - scanned.length()) + " (" + line + ":" + (column - scanned.length()) + ")");
                 break;
             case ONE:
                 stateOne(c);
